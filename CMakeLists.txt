@@ -116,14 +116,10 @@ include_directories(${PROTOBUF_INCLUDE_DIRS})
 list(APPEND libs ${PROTOBUF_LIBRARIES})
 
 protobuf_generate_cpp(PROTO_CPP PROTO_H
-    src/proto/messages_robocup_ssl_detection.proto
-    src/proto/messages_robocup_ssl_geometry.proto
-    src/proto/messages_robocup_ssl_wrapper.proto
-    src/proto/messages_robocup_ssl_refbox_log.proto
-    src/proto/messages_robocup_ssl_robot_status.proto
-    src/proto/grSim_Replacement.proto
-    src/proto/grSim_Commands.proto
-    src/proto/grSim_Packet.proto
+    src/proto/command.proto
+    src/proto/enviroment.proto
+    src/proto/packet.proto
+    src/proto/replacement.proto
 )
 
 qt5_add_resources(RESOURCES
@@ -226,10 +222,6 @@ else()
   install(FILES resources/icons/grsim.svg DESTINATION share/icons/hicolor/scalable/apps)
 endif()
 
-option(BUILD_CLIENTS "Choose this option if you want to build the example Qt client." ON)
-if(BUILD_CLIENTS)
-    add_subdirectory(clients/qt)
-endif()
 
 file(COPY README.md LICENSE.md DESTINATION ${CMAKE_BINARY_DIR})
 file(RENAME ${CMAKE_BINARY_DIR}/README.md ${CMAKE_BINARY_DIR}/README.txt)

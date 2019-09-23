@@ -39,9 +39,6 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include "configwidget.h"
 
 #include "config.h"
-
-#include "messages_robocup_ssl_robot_status.pb.h"
-
 #define WALL_COUNT 10
 
 class RobotsFomation;
@@ -79,8 +76,6 @@ public:
     void sendVisionBuffer();
     bool visibleInCam(int id, double x, double y);
     int  robotIndex(int robot,int team);
-    void addRobotStatus(Robots_Status& robotsPacket, int robotID, int team, bool infrared, KickStatus kickStatus);
-    void sendRobotStatus(Robots_Status& robotsPacket, QHostAddress sender, int team);
 
     ConfigWidget* cfg;
     CGraphics* g;

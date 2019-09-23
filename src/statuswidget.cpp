@@ -42,8 +42,6 @@ void CStatusWidget::write(QString str, QColor color)
         statusText->clear();
 
     statusText->setTextColor(color);
-    //statusText->append(QString::number(statusText->textCursor().blockNumber()) + " : " + str);
-    //statusText->append(QString::number(logTime.elapsed()) + " : " + str);
     statusText->append(str);
 
 
