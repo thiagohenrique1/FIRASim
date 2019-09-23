@@ -61,12 +61,12 @@ void RoboCupSSLServer::change_interface(const string & net_interface)
     _net_interface = new QNetworkInterface(QNetworkInterface::interfaceFromName(QString(net_interface.c_str())));
 }
 
-bool RoboCupSSLServer::send(const SSL_WrapperPacket & packet)
+bool RoboCupSSLServer::send(const Environment & env)
 {
     QByteArray datagram;
 
-    datagram.resize(packet.ByteSize());
-    bool success = packet.SerializeToArray(datagram.data(), datagram.size());
+    datagram.resize(env.ByteSize());
+    bool success = env.SerializeToArray(datagram.data(), datagram.size());
     if(!success) {
         //TODO: print useful info
         logStatus(QString("Serializing packet to array failed."), QColor("red"));
@@ -74,7 +74,7 @@ bool RoboCupSSLServer::send(const SSL_WrapperPacket & packet)
     }
 
     mutex.lock();
-    quint64 bytes_sent = _socket->writeDatagram(datagram, *_net_address, _port);
+    qint64 bytes_sent = _socket->writeDatagram(datagram, *_net_address, _port);
     mutex.unlock();
     if (bytes_sent != datagram.size()) {
         logStatus(QString("Sending UDP datagram failed (maybe too large?). Size was: %1 byte(s).").arg(datagram.size()), QColor("red"));
@@ -83,20 +83,3 @@ bool RoboCupSSLServer::send(const SSL_WrapperPacket & packet)
 
     return true;
 }
-
-bool RoboCupSSLServer::send(const SSL_DetectionFrame & frame)
-{
-    SSL_WrapperPacket pkt;
-    SSL_DetectionFrame * nframe = pkt.mutable_detection();
-    nframe->CopyFrom(frame);
-    return send(pkt);
-}
-
-bool RoboCupSSLServer::send(const SSL_GeometryData & geometry)
-{
-    SSL_WrapperPacket pkt;
-    SSL_GeometryData * gdata = pkt.mutable_geometry();
-    gdata->CopyFrom(geometry);
-    return send(pkt);
-}
-

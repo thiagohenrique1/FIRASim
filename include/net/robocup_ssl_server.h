@@ -24,9 +24,9 @@
 #include <string>
 #include <QMutex>
 #include <QObject>
-#include "messages_robocup_ssl_detection.pb.h"
-#include "messages_robocup_ssl_geometry.pb.h"
-#include "messages_robocup_ssl_wrapper.pb.h"
+
+#include "enviroment.pb.h"
+
 using namespace std;
 
 class QUdpSocket;
@@ -37,16 +37,14 @@ class RoboCupSSLServer
 {
 friend class MultiStackRoboCupSSL;
 public:
-    RoboCupSSLServer(QObject *parent=0,
+    RoboCupSSLServer(QObject *parent=nullptr,
                      const quint16 &port=10002,
                      const string &net_address="224.5.23.2",
                      const string &net_interface="");
 
     ~RoboCupSSLServer();
 
-    bool send(const SSL_WrapperPacket & packet);
-    bool send(const SSL_DetectionFrame & frame);
-    bool send(const SSL_GeometryData & geometry);
+    bool send(const Environment & env);
     void change_port(const quint16 &port);
     void change_address(const string & net_address);
     void change_interface(const string & net_interface);

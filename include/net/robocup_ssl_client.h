@@ -23,10 +23,11 @@
 #define ROBOCUP_SSL_CLIENT_H
 #include <string>
 #include <QMutex>
-#include "messages_robocup_ssl_detection.pb.h"
-#include "messages_robocup_ssl_geometry.pb.h"
-#include "messages_robocup_ssl_wrapper.pb.h"
-#include "messages_robocup_ssl_refbox_log.pb.h"
+
+#include "replacement.pb.h"
+#include "command.pb.h"
+#include "packet.pb.h"
+
 using namespace std;
 
 class QUdpSocket;
@@ -48,7 +49,7 @@ public:
 
     bool open();
     void close();
-    bool receive(SSL_WrapperPacket & packet);
+    bool receive(Packet & packet);
     inline void changePort(quint16 port) {_port = port;}
 
 protected:

@@ -73,7 +73,7 @@ bool RoboCupSSLClient::open()
     return true;
 }
 
-bool RoboCupSSLClient::receive(SSL_WrapperPacket & packet)
+bool RoboCupSSLClient::receive(Packet &packet)
 {
     if(_socket->state() == QUdpSocket::BoundState && _socket->hasPendingDatagrams()) {
         QByteArray datagram;
