@@ -68,9 +68,8 @@ public:
     virtual ~SSLWorld();
     void glinit();
     void step(dReal dt=-1);
-    Environment* generatePacket(int cam_id=0);
+    Environment* generatePacket();
     void sendVisionBuffer();
-    bool visibleInCam(int id, double x, double y);
     int  robotIndex(unsigned int robot, int team);
 
     ConfigWidget* cfg;
