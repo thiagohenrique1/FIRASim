@@ -25,13 +25,10 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 
 #include "logger.h"
 
-#include "grSim_Packet.pb.h"
-#include "grSim_Commands.pb.h"
-#include "grSim_Replacement.pb.h"
-#include "messages_robocup_ssl_detection.pb.h"
-#include "messages_robocup_ssl_geometry.pb.h"
-#include "messages_robocup_ssl_refbox_log.pb.h"
-#include "messages_robocup_ssl_wrapper.pb.h"
+#include "command.pb.h"
+#include "enviroment.pb.h"
+#include "packet.pb.h"
+#include "replacement.pb.h"
 
 
 #define ROBOT_GRAY 0.4
@@ -44,7 +41,7 @@ dReal rand0_1();
 
 dReal fric(dReal f)
 {
-    if (f==-1) return dInfinity;
+    if (f + 1 < 0.001) return dInfinity;
     return f;
 }
 
@@ -73,7 +70,7 @@ bool wheelCallBack(dGeomID o1,dGeomID o2,PSurface* s, int /*robots_count*/)
     dVector3 v={0,0,1,1};
     dVector3 axis;
     dMultiply0(axis,r,v,4,3,1);
-    dReal l = sqrt(axis[0]*axis[0] + axis[1]*axis[1]);
+    dReal l = std::sqrt(axis[0]*axis[0] + axis[1]*axis[1]);
     s->fdir1[0] = axis[0]/l;
     s->fdir1[1] = axis[1]/l;
     s->fdir1[2] = 0;
@@ -227,7 +224,7 @@ SSLWorld::SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form1,Ro
         float a1 = -form1->x[k];
         float a2 = form1->y[k];
         float a3 = ROBOT_START_Z(cfg);
-        robots[k] = new Robot(p,
+        robots[k] = new CRobot(p,
                               ball,
                               cfg,
                               -form1->x[k],
@@ -242,7 +239,7 @@ SSLWorld::SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form1,Ro
     }
     cfg->robotSettings = cfg->yellowSettings;
     for (int k=0;k<cfg->Robots_Count();k++)
-        robots[k+cfg->Robots_Count()] = new Robot(p,ball,cfg,form2->x[k],form2->y[k],ROBOT_START_Z(cfg),ROBOT_GRAY,ROBOT_GRAY,ROBOT_GRAY,k+cfg->Robots_Count()+1,wheeltexid,-1);//XXX
+        robots[k+cfg->Robots_Count()] = new CRobot(p,ball,cfg,form2->x[k],form2->y[k],ROBOT_START_Z(cfg),ROBOT_GRAY,ROBOT_GRAY,ROBOT_GRAY,k+cfg->Robots_Count()+1,wheeltexid,-1);//XXX
 
     p->initAllObjects();
 
@@ -316,7 +313,7 @@ SSLWorld::SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form1,Ro
     }
 }
 
-int SSLWorld::robotIndex(int robot,int team)
+int SSLWorld::robotIndex(unsigned int robot,int team)
 {
     if (robot >= cfg->Robots_Count()) return -1;
     return robot + team*cfg->Robots_Count();
@@ -502,55 +499,11 @@ void SSLWorld::step(dReal dt)
     framenum ++;
 }
 
-void SSLWorld::addRobotStatus(Robots_Status& robotsPacket, int robotID, int team, bool infrared, KickStatus kickStatus)
-{
-    Robot_Status* robot_status = robotsPacket.add_robots_status();
-    robot_status->set_robot_id(robotID);
-
-    if (infrared)
-        robot_status->set_infrared(1);
-    else
-        robot_status->set_infrared(0);
-
-    switch(kickStatus){
-        case NO_KICK:
-            robot_status->set_flat_kick(0);
-            robot_status->set_chip_kick(0);
-            break;
-        case FLAT_KICK:
-            robot_status->set_flat_kick(1);
-            robot_status->set_chip_kick(0);
-            break;
-        case CHIP_KICK:
-            robot_status->set_flat_kick(0);
-            robot_status->set_chip_kick(1);
-            break;
-        default:
-            robot_status->set_flat_kick(0);
-            robot_status->set_chip_kick(0);
-            break;
-    }
-}
-
-void SSLWorld::sendRobotStatus(Robots_Status& robotsPacket, QHostAddress sender, int team)
-{
-    int size = robotsPacket.ByteSize();
-    QByteArray buffer(size, 0);
-    robotsPacket.SerializeToArray(buffer.data(), buffer.size());
-    if (team == 0)
-    {
-        blueStatusSocket->writeDatagram(buffer.data(), buffer.size(), sender, cfg->BlueStatusSendPort());
-    }
-    else{
-        yellowStatusSocket->writeDatagram(buffer.data(), buffer.size(), sender, cfg->YellowStatusSendPort());
-    }
-}
-
 void SSLWorld::recvActions()
 {
     QHostAddress sender;
     quint16 port;
-    grSim_Packet packet;
+    Packet packet;
     while (commandSocket->hasPendingDatagrams())
     {
         int size = commandSocket->readDatagram(in_buffer, 65536, &sender, &port);
@@ -558,71 +511,23 @@ void SSLWorld::recvActions()
         {
             packet.ParseFromArray(in_buffer, size);
             int team=0;
-            if (packet.has_commands())
-            {
-                if (packet.commands().has_isteamyellow())
-                {
-                    if (packet.commands().isteamyellow()) team=1;
-                }
-                for (int i=0;i<packet.commands().robot_commands_size();i++)
-                {
-                    if (!packet.commands().robot_commands(i).has_id()) continue;
-                    int k = packet.commands().robot_commands(i).id();
-                    int id = robotIndex(k, team);
+            if (packet.has_cmd()) {
+                for (const auto& robot_cmd : packet.cmd().robot_commands()) {
+                    if (!robot_cmd.has_id()) continue;
+                    int id = robotIndex(robot_cmd.id(), robot_cmd.yellowteam());
                     if ((id < 0) || (id >= cfg->Robots_Count()*2)) continue;
-                    bool wheels = false;
-                    if (packet.commands().robot_commands(i).has_wheelsspeed())
-                    {
-                        if (packet.commands().robot_commands(i).wheelsspeed()==true)
-                        {
-                            if (packet.commands().robot_commands(i).has_wheel1()) robots[id]->setSpeed(0, packet.commands().robot_commands(i).wheel1());
-                            if (packet.commands().robot_commands(i).has_wheel2()) robots[id]->setSpeed(1, packet.commands().robot_commands(i).wheel2());
-                            if (packet.commands().robot_commands(i).has_wheel3()) robots[id]->setSpeed(2, packet.commands().robot_commands(i).wheel3());
-                            if (packet.commands().robot_commands(i).has_wheel4()) robots[id]->setSpeed(3, packet.commands().robot_commands(i).wheel4());
-                            wheels = true;
-                        }
+                    if (robot_cmd.has_wheelsspeed() && robot_cmd.wheelsspeed()) {
+                        if (robot_cmd.has_wheel_left())  robots[id]->setSpeed(0, robot_cmd.wheel_left());
+                        if (robot_cmd.has_wheel_right()) robots[id]->setSpeed(1, robot_cmd.wheel_right());
+                    } else {
+                        dReal vx = 0;if (robot_cmd.has_vel_normal())  vx = robot_cmd.vel_normal();
+                        dReal vw = 0;if (robot_cmd.has_vel_angular()) vw = robot_cmd.vel_angular();
+                        robots[id]->setSpeed(vx, 0.0, vw);
                     }
-                    if (!wheels)
-                    {
-                        dReal vx = 0;if (packet.commands().robot_commands(i).has_veltangent()) vx = packet.commands().robot_commands(i).veltangent();
-                        dReal vy = 0;if (packet.commands().robot_commands(i).has_velnormal())  vy = packet.commands().robot_commands(i).velnormal();
-                        dReal vw = 0;if (packet.commands().robot_commands(i).has_velangular()) vw = packet.commands().robot_commands(i).velangular();
-                        robots[id]->setSpeed(vx, vy, vw);
-                    }
-                    dReal kickx = 0 , kickz = 0;
-                    bool kick = false;
-                    if (packet.commands().robot_commands(i).has_kickspeedx())
-                    {
-                        kick = true;
-                        kickx = packet.commands().robot_commands(i).kickspeedx();
-                    }
-                    if (packet.commands().robot_commands(i).has_kickspeedz())
-                    {
-                        kick = true;
-                        kickz = packet.commands().robot_commands(i).kickspeedz();
-                    }
-                    if (kick && ((kickx>0.0001) || (kickz>0.0001)))
-                        robots[id]->kicker->kick(kickx,kickz);
-                    int rolling = 0;
-                    if (packet.commands().robot_commands(i).has_spinner())
-                    {
-                        if (packet.commands().robot_commands(i).spinner()) rolling = 1;
-                    }
-                    robots[id]->kicker->setRoller(rolling);
-
-                    char status = 0;
-                    status = k;
-                    if (robots[id]->kicker->isTouchingBall()) status = status | 8;
-                    if (robots[id]->on) status = status | 240;
-                    if (team == 0)
-                        blueStatusSocket->writeDatagram(&status,1,sender,cfg->BlueStatusSendPort());
-                    else
-                        yellowStatusSocket->writeDatagram(&status,1,sender,cfg->YellowStatusSendPort());
-
                 }
+
             }
-            if (packet.has_replacement())
-            {
+            if (packet.has_replace()) {
                 for (int i=0;i<packet.replacement().robots_size();i++)
                 {
                     int team = 0;
@@ -664,28 +569,6 @@ void SSLWorld::recvActions()
                     dBodySetAngularVel(ball->body,0,0,0);
                 }
             }
-        }
-
-        // send robot status
-        for (int team = 0; team < 2; ++team)
-        {
-            Robots_Status robotsPacket;
-            bool updateRobotStatus = false;
-            for (int i = 0; i < this->cfg->Robots_Count(); ++i)
-            {
-                int id = robotIndex(i, team);
-                bool isInfrared = robots[id]->kicker->isTouchingBall();
-                KickStatus kicking = robots[id]->kicker->isKicking();
-                if (isInfrared != lastInfraredState[team][i] || kicking != lastKickState[team][i])
-                {
-                    updateRobotStatus = true;
-                    addRobotStatus(robotsPacket, i, team, isInfrared, kicking);
-                    lastInfraredState[team][i] = isInfrared;
-                    lastKickState[team][i] = kicking;
-                }
-            }
-            if (updateRobotStatus)
-                sendRobotStatus(robotsPacket, sender, team);
         }
     }
 }
@@ -827,80 +710,7 @@ SSL_WrapperPacket* SSLWorld::generatePacket(int cam_id)
     return packet;
 }
 
-void SSLWorld::addFieldLinesArcs(SSL_GeometryFieldSize *field) {
-    const double kFieldLength = CONVUNIT(cfg->Field_Length());
-    const double kFieldWidth = CONVUNIT(cfg->Field_Width());
-    const double kGoalWidth = CONVUNIT(cfg->Goal_Width());
-    const double kGoalDepth = CONVUNIT(cfg->Goal_Depth());
-    const double kBoundaryWidth = CONVUNIT(cfg->Field_Referee_Margin());
-    const double kCenterRadius = CONVUNIT(cfg->Field_Rad());
-    const double kLineThickness = CONVUNIT(cfg->Field_Line_Width());
-    const double kPenaltyDepth  = CONVUNIT(cfg->Field_Penalty_Depth());
-    const double kPenaltyWidth  = CONVUNIT(cfg->Field_Penalty_Width());
-
-    const double kXMax = (kFieldLength-2*kLineThickness)/2;
-    const double kXMin = -kXMax;
-    const double kYMax = (kFieldWidth-kLineThickness)/2;
-    const double kYMin = -kYMax;
-    const double penAreaX = kXMax - kPenaltyDepth;
-    const double penAreaY = kPenaltyWidth / 2.0;
-
-    // Field lines
-    addFieldLine(field, "TopTouchLine", kXMin-kLineThickness/2, kYMax, kXMax+kLineThickness/2, kYMax, kLineThickness);
-    addFieldLine(field, "BottomTouchLine", kXMin-kLineThickness/2, kYMin, kXMax+kLineThickness/2, kYMin, kLineThickness);
-    addFieldLine(field, "LeftGoalLine", kXMin, kYMin, kXMin, kYMax, kLineThickness);
-    addFieldLine(field, "RightGoalLine", kXMax, kYMin, kXMax, kYMax, kLineThickness);
-    addFieldLine(field, "HalfwayLine", 0, kYMin, 0, kYMax, kLineThickness);
-    addFieldLine(field, "CenterLine", kXMin, 0, kXMax, 0, kLineThickness);
-    addFieldLine(field, "LeftPenaltyStretch",  kXMin+kPenaltyDepth-kLineThickness/2, -kPenaltyWidth/2, kXMin+kPenaltyDepth-kLineThickness/2, kPenaltyWidth/2, kLineThickness);
-    addFieldLine(field, "RightPenaltyStretch", kXMax-kPenaltyDepth+kLineThickness/2, -kPenaltyWidth/2, kXMax-kPenaltyDepth+kLineThickness/2, kPenaltyWidth/2, kLineThickness);
-
-    addFieldLine(field, "RightGoalTopLine", kXMax, kGoalWidth/2, kXMax+kGoalDepth, kGoalWidth/2, kLineThickness);
-    addFieldLine(field, "RightGoalBottomLine", kXMax, -kGoalWidth/2, kXMax+kGoalDepth, -kGoalWidth/2, kLineThickness);
-    addFieldLine(field, "RightGoalDepthLine", kXMax+kGoalDepth-kLineThickness/2, -kGoalWidth/2, kXMax+kGoalDepth-kLineThickness/2, kGoalWidth/2, kLineThickness);
-
-    addFieldLine(field, "LeftGoalTopLine", -kXMax, kGoalWidth/2, -kXMax-kGoalDepth, kGoalWidth/2, kLineThickness);
-    addFieldLine(field, "LeftGoalBottomLine", -kXMax, -kGoalWidth/2, -kXMax-kGoalDepth, -kGoalWidth/2, kLineThickness);
-    addFieldLine(field, "LeftGoalDepthLine", -kXMax-kGoalDepth+kLineThickness/2, -kGoalWidth/2, -kXMax-kGoalDepth+kLineThickness/2, kGoalWidth/2, kLineThickness);
-
-    addFieldLine(field, "LeftFieldLeftPenaltyStretch",   kXMin, kPenaltyWidth/2,  kXMin + kPenaltyDepth, kPenaltyWidth/2,   kLineThickness);
-    addFieldLine(field, "LeftFieldRightPenaltyStretch",  kXMin, -kPenaltyWidth/2, kXMin + kPenaltyDepth, -kPenaltyWidth/2,  kLineThickness);
-    addFieldLine(field, "RightFieldLeftPenaltyStretch",  kXMax, -kPenaltyWidth/2, kXMax - kPenaltyDepth, -kPenaltyWidth/2,kLineThickness);
-    addFieldLine(field, "RightFieldRightPenaltyStretch", kXMax, kPenaltyWidth/2,  kXMax - kPenaltyDepth, kPenaltyWidth/2,     kLineThickness);
-
-    // Field arcs
-    addFieldArc(field, "CenterCircle",              0,     0,                  kCenterRadius-kLineThickness/2,  0,        2*M_PI,   kLineThickness);
-}
-
-Vector2f* SSLWorld::allocVector(float x, float y) {
-    Vector2f *vec = new Vector2f();
-    vec->set_x(x);
-    vec->set_y(y);
-    return vec;
-}
-
-void SSLWorld::addFieldLine(SSL_GeometryFieldSize *field, const std::string &name, float p1_x, float p1_y, float p2_x, float p2_y, float thickness) {
-    SSL_FieldLineSegment *line = field->add_field_lines();
-    line->set_name(name.c_str());
-	line->mutable_p1()->set_x(p1_x);
-	line->mutable_p1()->set_y(p1_y);
-	line->mutable_p2()->set_x(p2_x);
-	line->mutable_p2()->set_y(p2_y);
-    line->set_thickness(thickness);
-}
-
-void SSLWorld::addFieldArc(SSL_GeometryFieldSize *field, const std::string &name, float c_x, float c_y, float radius, float a1, float a2, float thickness) {
-    SSL_FieldCicularArc *arc = field->add_field_arcs();
-	arc->set_name(name.c_str());
-	arc->mutable_center()->set_x(c_x);
-	arc->mutable_center()->set_y(c_y);
-    arc->set_radius(radius);
-    arc->set_a1(a1);
-    arc->set_a2(a2);
-    arc->set_thickness(thickness);
-}
-
-SendingPacket::SendingPacket(SSL_WrapperPacket* _packet,int _t)
+SendingPacket::SendingPacket(Environment *_packet, int _t)
 {
     packet = _packet;
     t      = _t;
@@ -1011,7 +821,7 @@ void RobotsFomation::loadFromFile(const QString& filename)
     }
 }
 
-void RobotsFomation::resetRobots(Robot** r,int team)
+void RobotsFomation::resetRobots(CRobot** r,int team)
 {
     dReal dir=-1;
     if (team==1) dir = 1;

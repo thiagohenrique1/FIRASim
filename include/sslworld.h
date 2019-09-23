@@ -44,8 +44,8 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 class RobotsFomation;
 class SendingPacket {
     public:
-    SendingPacket(SSL_WrapperPacket* _packet,int _t);
-    SSL_WrapperPacket* packet;
+    SendingPacket(Environment* _packet,int _t);
+    Environment* packet;
     int t;
 };
 
@@ -68,14 +68,10 @@ public:
     virtual ~SSLWorld();
     void glinit();
     void step(dReal dt=-1);
-    SSL_WrapperPacket* generatePacket(int cam_id=0);
-    void addFieldLinesArcs(SSL_GeometryFieldSize *field);
-    Vector2f* allocVector(float x, float y);
-    void addFieldLine(SSL_GeometryFieldSize *field, const std::string &name, float p1_x, float p1_y, float p2_x, float p2_y, float thickness);
-    void addFieldArc(SSL_GeometryFieldSize *field, const string &name, float c_x, float c_y, float radius, float a1, float a2, float thickness);
+    Environment* generatePacket(int cam_id=0);
     void sendVisionBuffer();
     bool visibleInCam(int id, double x, double y);
-    int  robotIndex(int robot,int team);
+    int  robotIndex(unsigned int robot, int team);
 
     ConfigWidget* cfg;
     CGraphics* g;
@@ -92,7 +88,7 @@ public:
     QUdpSocket *commandSocket;
     QUdpSocket *blueStatusSocket,*yellowStatusSocket;
     bool updatedCursor;
-    Robot* robots[MAX_ROBOT_COUNT*2];
+    CRobot* robots[MAX_ROBOT_COUNT*2];
     QTime *timer;
     int sendGeomCount;
 public slots:
@@ -108,7 +104,7 @@ class RobotsFomation {
         RobotsFomation(int type, ConfigWidget* _cfg);
         void setAll(dReal *xx,dReal *yy);
         void loadFromFile(const QString& filename);
-        void resetRobots(Robot** r,int team);
+        void resetRobots(CRobot** r,int team);
     private:
         ConfigWidget* cfg;
 };
