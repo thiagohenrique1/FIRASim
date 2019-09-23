@@ -32,7 +32,7 @@ enum KickStatus
     CHIP_KICK = 2,
 };
 
-class Robot
+class CRobot
 {
     PWorld* w;
     PBall* m_ball;
@@ -58,13 +58,13 @@ public:
     {
       public:
         int id;
-        Wheel(Robot* robot,int _id,dReal ang,dReal ang2,int wheeltexid);
+        Wheel(CRobot* robot,int _id,dReal ang,dReal ang2,int wheeltexid);
         void step();
         dJointID joint;
         dJointID motor;
         PCylinder* cyl;
         dReal speed;
-        Robot* rob;
+        CRobot* rob;
     } *wheels[4];
     class Kicker
     {
@@ -75,7 +75,7 @@ public:
         dReal m_kickspeed,m_kicktime;
         bool holdingBall;
       public:
-        Kicker(Robot* robot);
+        Kicker(CRobot* robot);
         void step();
         void kick(dReal kickspeedx, dReal kickspeedz);
         void setRoller(int roller);
@@ -88,11 +88,11 @@ public:
         dJointID joint;
         dJointID robot_to_ball;
         PBox* box;
-        Robot* rob;
+        CRobot* rob;
     } *kicker;
 
-    Robot(PWorld* world,PBall* ball,ConfigWidget* _cfg,dReal x,dReal y,dReal z,dReal r,dReal g,dReal b,int rob_id,int wheeltexid,int dir);
-    ~Robot();
+    CRobot(PWorld* world,PBall* ball,ConfigWidget* _cfg,dReal x,dReal y,dReal z,dReal r,dReal g,dReal b,int rob_id,int wheeltexid,int dir);
+    ~CRobot();
     void step();
     void drawLabel();
     void setSpeed(int i,dReal s); //i = 0,1,2,3

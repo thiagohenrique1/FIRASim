@@ -20,7 +20,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 
 // ang2 = position angle
 // ang  = rotation angle
-Robot::Wheel::Wheel(Robot* robot,int _id,dReal ang,dReal ang2,int wheeltexid)
+CRobot::Wheel::Wheel(CRobot* robot,int _id,dReal ang,dReal ang2,int wheeltexid)
 {
     id = _id;
     rob = robot;
@@ -56,13 +56,13 @@ Robot::Wheel::Wheel(Robot* robot,int _id,dReal ang,dReal ang2,int wheeltexid)
     speed = 0;
 }
 
-void Robot::Wheel::step()
+void CRobot::Wheel::step()
 {
     dJointSetAMotorParam(motor,dParamVel,speed);
     dJointSetAMotorParam(motor,dParamFMax,rob->cfg->robotSettings.Wheel_Motor_FMax);
 }
 
-Robot::Kicker::Kicker(Robot* robot) : holdingBall(false)
+CRobot::Kicker::Kicker(CRobot* robot) : holdingBall(false)
 {
     rob = robot;
 
@@ -92,7 +92,7 @@ Robot::Kicker::Kicker(Robot* robot) : holdingBall(false)
     kicking = NO_KICK;
 }
 
-void Robot::Kicker::step()
+void CRobot::Kicker::step()
 {
     if (!isTouchingBall() || rolling == 0) unholdBall();
     if (kicking != NO_KICK)
@@ -112,7 +112,7 @@ void Robot::Kicker::step()
     else box->setColor(0.9,0.9,0.9);
 }
 
-bool Robot::Kicker::isTouchingBall()
+bool CRobot::Kicker::isTouchingBall()
 {
     dReal vx,vy,vz;
     dReal bx,by,bz;
@@ -128,29 +128,29 @@ bool Robot::Kicker::isTouchingBall()
     return ((xx<rob->cfg->robotSettings.KickerThickness*2.0f+rob->cfg->BallRadius()) && (yy<rob->cfg->robotSettings.KickerWidth*0.5f) && (zz<rob->cfg->robotSettings.KickerHeight*0.5f));
 }
 
-KickStatus Robot::Kicker::isKicking()
+KickStatus CRobot::Kicker::isKicking()
 {
     return kicking;
 }
 
-void Robot::Kicker::setRoller(int roller)
+void CRobot::Kicker::setRoller(int roller)
 {
     rolling = roller;
 }
 
-int Robot::Kicker::getRoller()
+int CRobot::Kicker::getRoller()
 {
     return rolling;
 }
 
-void Robot::Kicker::toggleRoller()
+void CRobot::Kicker::toggleRoller()
 {
     if (rolling==0)
         rolling = 1;
     else rolling = 0;
 }
 
-void Robot::Kicker::kick(dReal kickspeedx, dReal kickspeedz)
+void CRobot::Kicker::kick(dReal kickspeedx, dReal kickspeedz)
 {    
     dReal dx,dy,dz;
     dReal vx,vy,vz;
@@ -178,7 +178,7 @@ void Robot::Kicker::kick(dReal kickspeedx, dReal kickspeedz)
     }
 }
 
-void Robot::Kicker::holdBall(){
+void CRobot::Kicker::holdBall(){
     dReal vx,vy,vz;
     dReal bx,by,bz;
     dReal kx,ky,kz;
@@ -196,14 +196,14 @@ void Robot::Kicker::holdBall(){
     holdingBall = true;
 }
 
-void Robot::Kicker::unholdBall(){
+void CRobot::Kicker::unholdBall(){
     if(holdingBall) {
         dJointDestroy(robot_to_ball);
         holdingBall = false;
     }
 }
 
-Robot::Robot(PWorld* world,PBall *ball,ConfigWidget* _cfg,dReal x,dReal y,dReal z,dReal r,dReal g,dReal b,int rob_id,int wheeltexid,int dir)
+CRobot::CRobot(PWorld* world,PBall *ball,ConfigWidget* _cfg,dReal x,dReal y,dReal z,dReal r,dReal g,dReal b,int rob_id,int wheeltexid,int dir)
 {      
     m_r = r;
     m_g = g;
@@ -241,22 +241,22 @@ Robot::Robot(PWorld* world,PBall *ball,ConfigWidget* _cfg,dReal x,dReal y,dReal 
     on = true;
 }
 
-Robot::~Robot()
+CRobot::~CRobot()
 {
 
 }
 
-PBall* Robot::getBall()
+PBall* CRobot::getBall()
 {
     return m_ball;
 }
 
-PWorld* Robot::getWorld()
+PWorld* CRobot::getWorld()
 {
     return w;
 }
 
-int Robot::getID()
+int CRobot::getID()
 {
     return m_rob_id - 1;
 }
@@ -267,7 +267,7 @@ void normalizeVector(dReal& x,dReal& y,dReal& z)
     x /= d;y /= d;z /= d;
 }
 
-void Robot::step()
+void CRobot::step()
 {    
     if (on)
     {
@@ -297,7 +297,7 @@ void Robot::step()
     last_state = on;
 }
 
-void Robot::drawLabel()
+void CRobot::drawLabel()
 {
     glPushMatrix();
     dVector3 pos;
@@ -343,13 +343,13 @@ void Robot::drawLabel()
     glPopMatrix();
 }
 
-void Robot::resetSpeeds()
+void CRobot::resetSpeeds()
 {
     wheels[0]->speed = wheels[1]->speed = wheels[2]->speed = wheels[3]->speed = 0;
 }
 
 
-void Robot::resetRobot()
+void CRobot::resetRobot()
 {
     resetSpeeds();
     dBodySetLinearVel(chassis->body,0,0,0);
@@ -370,14 +370,14 @@ void Robot::resetRobot()
     else setDir(0);
 }
 
-void Robot::getXY(dReal& x,dReal &y)
+void CRobot::getXY(dReal& x,dReal &y)
 {
     dReal xx,yy,zz;
     chassis->getBodyPosition(xx,yy,zz);
     x = xx;y = yy;
 }
 
-dReal Robot::getDir()
+dReal CRobot::getDir()
 {
     dReal x,y,z;
     chassis->getBodyDirection(x,y,z);
@@ -387,7 +387,7 @@ dReal Robot::getDir()
     return (y > 0) ? absAng : -absAng;
 }
 
-dReal Robot::getDir(dReal &k)
+dReal CRobot::getDir(dReal &k)
 {
     dReal x,y,z;
     chassis->getBodyDirection(x,y,z,k);
@@ -397,7 +397,7 @@ dReal Robot::getDir(dReal &k)
     return (y > 0) ? absAng : -absAng;
 }
 
-void Robot::setXY(dReal x,dReal y)
+void CRobot::setXY(dReal x,dReal y)
 {
     dReal xx,yy,zz,kx,ky,kz;
     dReal height = ROBOT_START_Z(cfg);
@@ -413,7 +413,7 @@ void Robot::setXY(dReal x,dReal y)
     }
 }
 
-void Robot::setDir(dReal ang)
+void CRobot::setDir(dReal ang)
 {
     ang*=M_PI/180.0f;
     chassis->setBodyRotation(0,0,1,ang);
@@ -437,13 +437,13 @@ void Robot::setDir(dReal ang)
     }
 }
 
-void Robot::setSpeed(int i,dReal s)
+void CRobot::setSpeed(int i,dReal s)
 {
     if (!((i>=4) || (i<0)))
         wheels[i]->speed = s;
 }
 
-void Robot::setSpeed(dReal vx, dReal vy, dReal vw)
+void CRobot::setSpeed(dReal vx, dReal vy, dReal vw)
 {
     // Calculate Motor Speeds
     dReal _DEG2RAD = M_PI / 180.0;
@@ -460,13 +460,13 @@ void Robot::setSpeed(dReal vx, dReal vy, dReal vw)
     setSpeed(3 , dw4);
 }
 
-dReal Robot::getSpeed(int i)
+dReal CRobot::getSpeed(int i)
 {
     if ((i>=4) || (i<0)) return -1;
     return wheels[i]->speed;
 }
 
-void Robot::incSpeed(int i,dReal v)
+void CRobot::incSpeed(int i,dReal v)
 {
     if (!((i>=4) || (i<0)))
         wheels[i]->speed += v;
