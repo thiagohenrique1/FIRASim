@@ -124,27 +124,16 @@ void normalizeVector(dReal& x,dReal& y,dReal& z)
 
 void CRobot::step()
 {    
-    if (on)
-    {
-        if (firsttime)
-        {
+    if (on){
+        if (firsttime) {
             if (m_dir==-1) setDir(180);
             firsttime = false;
         }
-        wheels[0]->step();
-        wheels[1]->step();
-        wheels[2]->step();
-        wheels[3]->step();
+    } else {
+        if (last_state) wheels[0]->speed = wheels[1]->speed = 0;
     }
-    else {
-        if (last_state)
-        {
-            wheels[0]->speed = wheels[1]->speed = 0;
-            wheels[0]->step();
-            wheels[1]->step();
-        }
-    }
-    last_state = on;
+	for (auto& wheel : wheels) wheel->step();
+	last_state = on;
 }
 
 void CRobot::drawLabel()
