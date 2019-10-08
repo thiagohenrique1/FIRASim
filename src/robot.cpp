@@ -240,10 +240,9 @@ void CRobot::setXY(dReal x,dReal y)
     chassis->getBodyPosition(xx,yy,zz);
     chassis->setBodyPosition(x,y,height);
     dummy->setBodyPosition(x,y,height);
-    for (int i=0;i<4;i++)
-    {
-        wheels[i]->cyl->getBodyPosition(kx,ky,kz);
-        wheels[i]->cyl->setBodyPosition(kx-xx+x,ky-yy+y,kz-zz+height);
+    for (auto& wheel : wheels) {
+        wheel->cyl->getBodyPosition(kx,ky,kz);
+        wheel->cyl->setBodyPosition(kx-xx+x,ky-yy+y,kz-zz+height);
     }
 }
 
@@ -257,21 +256,18 @@ void CRobot::setDir(dReal ang)
     chassis->getBodyPosition(cPos[0],cPos[1],cPos[2],false);
     chassis->getBodyRotation(cRot,false);
     dMultiply0(finalPos,cRot,localPos,4,3,1);finalPos[0]+=cPos[0];finalPos[1]+=cPos[1];finalPos[2]+=cPos[2];
-    for (int i=0;i<2;i++)
-    {
-        wheels[i]->cyl->getBodyRotation(wLocalRot,true);
+    for (auto & wheel : wheels) {
+        wheel->cyl->getBodyRotation(wLocalRot,true);
         dMultiply0(wRot,cRot,wLocalRot,3,3,3);
-        dBodySetRotation(wheels[i]->cyl->body,wRot);
-        wheels[i]->cyl->getBodyPosition(localPos[0],localPos[1],localPos[2],true);
+        dBodySetRotation(wheel->cyl->body,wRot);
+        wheel->cyl->getBodyPosition(localPos[0],localPos[1],localPos[2],true);
         dMultiply0(finalPos,cRot,localPos,4,3,1);finalPos[0]+=cPos[0];finalPos[1]+=cPos[1];finalPos[2]+=cPos[2];
-        wheels[i]->cyl->setBodyPosition(finalPos[0],finalPos[1],finalPos[2],false);
+        wheel->cyl->setBodyPosition(finalPos[0],finalPos[1],finalPos[2],false);
     }
 }
 
-void CRobot::setSpeed(int i,dReal s)
-{
-    if (!((i>=4) || (i<0)))
-        wheels[i]->speed = s;
+void CRobot::setSpeed(int i,dReal s) {
+    if (!((i>=4) || (i<0))) wheels[i]->speed = s;
 }
 
 void CRobot::setSpeed(dReal vx, dReal vy, dReal vw) {
@@ -290,15 +286,12 @@ void CRobot::setSpeed(dReal vx, dReal vy, dReal vw) {
     setSpeed(3 , dw4);
 }
 
-dReal CRobot::getSpeed(int i)
-{
+dReal CRobot::getSpeed(int i) {
     if ((i>=2) || (i<0)) return -1;
     return wheels[i]->speed;
 }
 
-void CRobot::incSpeed(int i,dReal v)
-{
-    if (!((i>=2) || (i<0)))
-        wheels[i]->speed += v;
+void CRobot::incSpeed(int i,dReal v) {
+    if (!((i>=2) || (i<0))) wheels[i]->speed += v;
 }
 
