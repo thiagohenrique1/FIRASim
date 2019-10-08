@@ -62,147 +62,6 @@ void CRobot::Wheel::step()
     dJointSetAMotorParam(motor,dParamFMax,rob->cfg->robotSettings.Wheel_Motor_FMax);
 }
 
-CRobot::Kicker::Kicker(CRobot* robot) : holdingBall(false)
-{
-    rob = robot;
-
-    dReal x = rob->m_x;
-    dReal y = rob->m_y;
-    dReal z = rob->m_z;
-    dReal centerx = x+(rob->cfg->robotSettings.RobotCenterFromKicker+rob->cfg->robotSettings.KickerThickness);
-    dReal centery = y;
-    dReal centerz = z-(rob->cfg->robotSettings.RobotHeight)*0.5f+rob->cfg->robotSettings.WheelRadius-rob->cfg->robotSettings.BottomHeight+rob->cfg->robotSettings.KickerZ;
-    box = new PBox(centerx,centery,centerz,rob->cfg->robotSettings.KickerThickness,rob->cfg->robotSettings.KickerWidth,rob->cfg->robotSettings.KickerHeight,rob->cfg->robotSettings.KickerMass,0.9,0.9,0.9);
-    box->setBodyPosition(centerx-x,centery-y,centerz-z,true);
-    box->space = rob->space;
-
-    rob->w->addObject(box);
-
-    joint = dJointCreateHinge (rob->w->world,0);
-    dJointAttach (joint,rob->chassis->body,box->body);
-    const dReal *aa = dBodyGetPosition (box->body);
-    dJointSetHingeAnchor (joint,aa[0],aa[1],aa[2]);
-    dJointSetHingeAxis (joint,0,-1,0);
-
-    dJointSetHingeParam (joint,dParamVel,0);
-    dJointSetHingeParam (joint,dParamLoStop,0);
-    dJointSetHingeParam (joint,dParamHiStop,0);
-
-    rolling = 0;
-    kicking = NO_KICK;
-}
-
-void CRobot::Kicker::step()
-{
-    if (!isTouchingBall() || rolling == 0) unholdBall();
-    if (kicking != NO_KICK)
-    {
-        box->setColor(1,0.3,0);
-        kickstate--;
-        if (kickstate<=0) kicking = NO_KICK;
-    }
-    else if (rolling!=0)
-    {
-        box->setColor(1,0.7,0);
-        if (isTouchingBall())
-        {
-            holdBall();
-        }
-    }
-    else box->setColor(0.9,0.9,0.9);
-}
-
-bool CRobot::Kicker::isTouchingBall()
-{
-    dReal vx,vy,vz;
-    dReal bx,by,bz;
-    dReal kx,ky,kz;
-    rob->chassis->getBodyDirection(vx,vy,vz);
-    rob->getBall()->getBodyPosition(bx,by,bz);
-    box->getBodyPosition(kx,ky,kz);
-    kx += vx*rob->cfg->robotSettings.KickerThickness*0.5f;
-    ky += vy*rob->cfg->robotSettings.KickerThickness*0.5f;
-    dReal xx = fabs((kx-bx)*vx + (ky-by)*vy);
-    dReal yy = fabs(-(kx-bx)*vy + (ky-by)*vx);
-    dReal zz = fabs(kz-bz);
-    return ((xx<rob->cfg->robotSettings.KickerThickness*2.0f+rob->cfg->BallRadius()) && (yy<rob->cfg->robotSettings.KickerWidth*0.5f) && (zz<rob->cfg->robotSettings.KickerHeight*0.5f));
-}
-
-KickStatus CRobot::Kicker::isKicking()
-{
-    return kicking;
-}
-
-void CRobot::Kicker::setRoller(int roller)
-{
-    rolling = roller;
-}
-
-int CRobot::Kicker::getRoller()
-{
-    return rolling;
-}
-
-void CRobot::Kicker::toggleRoller()
-{
-    if (rolling==0)
-        rolling = 1;
-    else rolling = 0;
-}
-
-void CRobot::Kicker::kick(dReal kickspeedx, dReal kickspeedz)
-{    
-    dReal dx,dy,dz;
-    dReal vx,vy,vz;
-    rob->chassis->getBodyDirection(dx,dy,dz);dz = 0;
-    dReal zf = kickspeedz;
-    unholdBall();
-    if (isTouchingBall())
-    {
-        dReal dlen = dx*dx+dy*dy+dz*dz;
-        dlen = sqrt(dlen);
-        vx = dx*kickspeedx/dlen;
-        vy = dy*kickspeedx/dlen;
-        vz = zf;
-        const dReal* vball = dBodyGetLinearVel(rob->getBall()->body);
-        dReal vn = -(vball[0]*dx + vball[1]*dy)*rob->cfg->robotSettings.KickerDampFactor;
-        dReal vt = -(vball[0]*dy - vball[1]*dx);
-        vx += vn * dx - vt * dy;
-        vy += vn * dy + vt * dx;
-        dBodySetLinearVel(rob->getBall()->body,vx,vy,vz);
-        if (kickspeedz >= 1)
-            kicking = CHIP_KICK;
-        else
-            kicking = FLAT_KICK;
-        kickstate = 10;
-    }
-}
-
-void CRobot::Kicker::holdBall(){
-    dReal vx,vy,vz;
-    dReal bx,by,bz;
-    dReal kx,ky,kz;
-    rob->chassis->getBodyDirection(vx,vy,vz);
-    rob->getBall()->getBodyPosition(bx,by,bz);
-    box->getBodyPosition(kx,ky,kz);
-    kx += vx*rob->cfg->robotSettings.KickerThickness*0.5f;
-    ky += vy*rob->cfg->robotSettings.KickerThickness*0.5f;
-    dReal xx = fabs((kx-bx)*vx + (ky-by)*vy);
-    dReal yy = fabs(-(kx-bx)*vy + (ky-by)*vx);
-    if(holdingBall || xx-rob->cfg->BallRadius() < 0) return;
-    dBodySetLinearVel(rob->getBall()->body,0,0,0);
-    robot_to_ball = dJointCreateHinge(rob->getWorld()->world,0);
-    dJointAttach (robot_to_ball,box->body,rob->getBall()->body);
-    holdingBall = true;
-}
-
-void CRobot::Kicker::unholdBall(){
-    if(holdingBall) {
-        dJointDestroy(robot_to_ball);
-        holdingBall = false;
-    }
-}
-
 CRobot::CRobot(PWorld* world,PBall *ball,ConfigWidget* _cfg,dReal x,dReal y,dReal z,dReal r,dReal g,dReal b,int rob_id,int wheeltexid,int dir)
 {      
     m_r = r;
@@ -231,12 +90,8 @@ CRobot::CRobot(PWorld* world,PBall *ball,ConfigWidget* _cfg,dReal x,dReal y,dRea
     dummy_to_chassis = dJointCreateFixed(world->world,0);
     dJointAttach (dummy_to_chassis,chassis->body,dummy->body);
 
-    kicker = new Kicker(this);
-
     wheels[0] = new Wheel(this,0,cfg->robotSettings.Wheel1Angle,cfg->robotSettings.Wheel1Angle,wheeltexid);
     wheels[1] = new Wheel(this,1,cfg->robotSettings.Wheel2Angle,cfg->robotSettings.Wheel2Angle,wheeltexid);
-    wheels[2] = new Wheel(this,2,cfg->robotSettings.Wheel3Angle,cfg->robotSettings.Wheel3Angle,wheeltexid);
-    wheels[3] = new Wheel(this,3,cfg->robotSettings.Wheel4Angle,cfg->robotSettings.Wheel4Angle,wheeltexid);
     firsttime=true;
     on = true;
 }
@@ -280,18 +135,13 @@ void CRobot::step()
         wheels[1]->step();
         wheels[2]->step();
         wheels[3]->step();
-        kicker->step();
     }
     else {
         if (last_state)
         {
-            wheels[0]->speed = wheels[1]->speed = wheels[2]->speed = wheels[3]->speed = 0;
-            kicker->setRoller(0);
+            wheels[0]->speed = wheels[1]->speed = 0;
             wheels[0]->step();
             wheels[1]->step();
-            wheels[2]->step();
-            wheels[3]->step();
-            kicker->step();
         }
     }
     last_state = on;
@@ -345,7 +195,7 @@ void CRobot::drawLabel()
 
 void CRobot::resetSpeeds()
 {
-    wheels[0]->speed = wheels[1]->speed = wheels[2]->speed = wheels[3]->speed = 0;
+    wheels[0]->speed = wheels[1]->speed = 0;
 }
 
 
@@ -356,8 +206,6 @@ void CRobot::resetRobot()
     dBodySetAngularVel(chassis->body,0,0,0);
     dBodySetLinearVel(dummy->body,0,0,0);
     dBodySetAngularVel(dummy->body,0,0,0);
-    dBodySetLinearVel(kicker->box->body,0,0,0);
-    dBodySetAngularVel(kicker->box->body,0,0,0);
     for (int i=0;i<4;i++)
     {
         dBodySetLinearVel(wheels[i]->cyl->body,0,0,0);
@@ -404,8 +252,6 @@ void CRobot::setXY(dReal x,dReal y)
     chassis->getBodyPosition(xx,yy,zz);
     chassis->setBodyPosition(x,y,height);
     dummy->setBodyPosition(x,y,height);
-    kicker->box->getBodyPosition(kx,ky,kz);
-    kicker->box->setBodyPosition(kx-xx+x,ky-yy+y,kz-zz+height);
     for (int i=0;i<4;i++)
     {
         wheels[i]->cyl->getBodyPosition(kx,ky,kz);
@@ -417,16 +263,13 @@ void CRobot::setDir(dReal ang)
 {
     ang*=M_PI/180.0f;
     chassis->setBodyRotation(0,0,1,ang);
-    kicker->box->setBodyRotation(0,0,1,ang);
     dummy->setBodyRotation(0,0,1,ang);
     dMatrix3 wLocalRot,wRot,cRot;
     dVector3 localPos,finalPos,cPos;
     chassis->getBodyPosition(cPos[0],cPos[1],cPos[2],false);
     chassis->getBodyRotation(cRot,false);
-    kicker->box->getBodyPosition(localPos[0],localPos[1],localPos[2],true);
     dMultiply0(finalPos,cRot,localPos,4,3,1);finalPos[0]+=cPos[0];finalPos[1]+=cPos[1];finalPos[2]+=cPos[2];
-    kicker->box->setBodyPosition(finalPos[0],finalPos[1],finalPos[2],false);
-    for (int i=0;i<4;i++)
+    for (int i=0;i<2;i++)
     {
         wheels[i]->cyl->getBodyRotation(wLocalRot,true);
         dMultiply0(wRot,cRot,wLocalRot,3,3,3);
@@ -443,8 +286,7 @@ void CRobot::setSpeed(int i,dReal s)
         wheels[i]->speed = s;
 }
 
-void CRobot::setSpeed(dReal vx, dReal vy, dReal vw)
-{
+void CRobot::setSpeed(dReal vx, dReal vy, dReal vw) {
     // Calculate Motor Speeds
     dReal _DEG2RAD = M_PI / 180.0;
     dReal motorAlpha[4] = {cfg->robotSettings.Wheel1Angle * _DEG2RAD, cfg->robotSettings.Wheel2Angle * _DEG2RAD, cfg->robotSettings.Wheel3Angle * _DEG2RAD, cfg->robotSettings.Wheel4Angle * _DEG2RAD};
@@ -462,13 +304,13 @@ void CRobot::setSpeed(dReal vx, dReal vy, dReal vw)
 
 dReal CRobot::getSpeed(int i)
 {
-    if ((i>=4) || (i<0)) return -1;
+    if ((i>=2) || (i<0)) return -1;
     return wheels[i]->speed;
 }
 
 void CRobot::incSpeed(int i,dReal v)
 {
-    if (!((i>=4) || (i<0)))
+    if (!((i>=2) || (i<0)))
         wheels[i]->speed += v;
 }
 

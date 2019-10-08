@@ -65,31 +65,7 @@ public:
         PCylinder* cyl;
         dReal speed;
         CRobot* rob;
-    } *wheels[4];
-    class Kicker
-    {
-      private:
-        KickStatus kicking;
-        int rolling;
-        int kickstate;
-        dReal m_kickspeed,m_kicktime;
-        bool holdingBall;
-      public:
-        Kicker(CRobot* robot);
-        void step();
-        void kick(dReal kickspeedx, dReal kickspeedz);
-        void setRoller(int roller);
-        int getRoller();
-        void toggleRoller();
-        bool isTouchingBall();
-        KickStatus isKicking();
-        void holdBall();
-        void unholdBall();
-        dJointID joint;
-        dJointID robot_to_ball;
-        PBox* box;
-        CRobot* rob;
-    } *kicker;
+    } *wheels[2];
 
     CRobot(PWorld* world,PBall* ball,ConfigWidget* _cfg,dReal x,dReal y,dReal z,dReal r,dReal g,dReal b,int rob_id,int wheeltexid,int dir);
     ~CRobot();
