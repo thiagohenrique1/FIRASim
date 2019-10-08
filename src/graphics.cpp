@@ -801,6 +801,52 @@ void CGraphics::_drawBox (const dReal sides[3])
     glEnd();
 }
 
+void CGraphics::_drawBox_TopTextured (const dReal sides[3], int tex_id, bool robot)
+{
+	if (graphicDisabled) return;
+	dReal lx = sides[0]*0.5f;
+	dReal ly = sides[1]*0.5f;
+	dReal lz = sides[2]*0.5f;
+	
+	// sides
+	glBegin (GL_TRIANGLE_STRIP);
+	glNormal3f(-1, 0, 0);
+	glVertex3f(-lx, -ly, -lz);
+	glVertex3f(-lx, -ly, lz);
+	glVertex3f(-lx, ly, -lz);
+	glVertex3f(-lx, ly, lz);
+	glNormal3f(0, 1, 0);
+	glVertex3f(lx, ly, -lz);
+	glVertex3f(lx, ly, lz);
+	glNormal3f(1, 0, 0);
+	glVertex3f(lx, -ly, -lz);
+	glVertex3f(lx, -ly, lz);
+	glNormal3f(0, -1, 0);
+	glVertex3f(-lx, -ly, -lz);
+	glVertex3f(-lx, -ly, lz);
+	
+	glEnd();
+	
+	useTexture(tex_id);
+	
+	// top face
+	glBegin (GL_TRIANGLE_FAN);
+	glNormal3f(0, 0, 1);
+	glVertex3f(-lx, -ly, lz);
+	glVertex3f(lx, -ly, lz);
+	glVertex3f(lx, ly, lz);
+	glVertex3f(-lx, ly, lz);
+	glEnd();
+	
+	// bottom face
+	glBegin (GL_TRIANGLE_FAN);
+	glNormal3f(0, 0, -1);
+	glVertex3f(-lx, -ly, -lz);
+	glVertex3f(-lx, ly, -lz);
+	glVertex3f(lx, ly, -lz);
+	glVertex3f(lx, -ly, -lz);
+	glEnd();
+}
 
 // This is recursively subdivides a triangular area (vertices p1,p2,p3) into
 // smaller triangles, and then draws the triangles. All triangle vertices are
@@ -1162,6 +1208,14 @@ void CGraphics::drawBox (const dReal pos[3], const dReal R[12],
     _drawBox (sides);
     glPopMatrix();
 
+}
+
+void CGraphics::drawBox_TopTextured(const dReal pos[3], const dReal R[12], const dReal sides[3], int tex_id,bool robot) {
+	if (graphicDisabled) return;
+	glShadeModel (GL_FLAT);
+	setTransform (pos,R);
+	_drawBox_TopTextured (sides,tex_id,robot);
+	glPopMatrix();
 }
 
 
