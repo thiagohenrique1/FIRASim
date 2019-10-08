@@ -195,10 +195,9 @@ void CRobot::resetRobot()
     dBodySetAngularVel(chassis->body,0,0,0);
     dBodySetLinearVel(dummy->body,0,0,0);
     dBodySetAngularVel(dummy->body,0,0,0);
-    for (int i=0;i<4;i++)
-    {
-        dBodySetLinearVel(wheels[i]->cyl->body,0,0,0);
-        dBodySetAngularVel(wheels[i]->cyl->body,0,0,0);
+    for (auto& wheel : wheels) {
+        dBodySetLinearVel(wheel->cyl->body,0,0,0);
+        dBodySetAngularVel(wheel->cyl->body,0,0,0);
     }
     dReal x,y;
     getXY(x,y);
@@ -220,7 +219,7 @@ dReal CRobot::getDir()
     chassis->getBodyDirection(x,y,z);
     dReal dot = x;//zarb dar (1.0,0.0,0.0)
     dReal length = sqrt(x*x + y*y);
-    dReal absAng = (dReal)(acos((dReal)(dot/length)) * (180.0f/M_PI));
+    auto absAng = (dReal)(acos((dReal)(dot/length)) * (180.0f/M_PI));
     return (y > 0) ? absAng : -absAng;
 }
 
@@ -230,7 +229,7 @@ dReal CRobot::getDir(dReal &k)
     chassis->getBodyDirection(x,y,z,k);
     dReal dot = x;//zarb dar (1.0,0.0,0.0)
     dReal length = sqrt(x*x + y*y);
-    dReal absAng = (dReal)(acos((dReal)(dot/length)) * (180.0f/M_PI));
+    auto absAng = (dReal)(acos((dReal)(dot/length)) * (180.0f/M_PI));
     return (y > 0) ? absAng : -absAng;
 }
 
