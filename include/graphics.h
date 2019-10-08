@@ -37,6 +37,7 @@ private:
     QGLWidget* owner;
     int sphere_quality;
     void _drawBox (const dReal sides[3]);
+    void _drawBox_TopTextured (const dReal sides[3], int tex_id, bool robot);
     void _drawPatch (dReal p1[3], dReal p2[3], dReal p3[3], int level);
     void _drawSphere();
     void _drawCapsule (dReal l, dReal r);
@@ -83,6 +84,7 @@ public:
     void drawSSLGround(dReal SSL_FIELD_RAD,dReal SSL_FIELD_LENGTH,dReal SSL_FIELD_WIDTH,dReal SSL_FIELD_PENALTY_DEPTH,dReal SSL_FIELD_PENALTY_WIDTH,dReal SSL_FIELD_PENALTY_POINT, dReal SSL_FIELD_LINE_WIDTH, dReal epsilon);
 
     void drawBox (const dReal pos[3], const dReal R[12],const dReal sides[3]);
+	void drawBox_TopTextured(const dReal pos[3], const dReal R[12], const dReal sides[3], int tex_id,bool robot);
     void drawSphere (const dReal pos[3], const dReal R[12],dReal radius);
     void drawCylinder (const dReal pos[3], const dReal R[12],dReal length, dReal radius);
     void drawCylinder_TopTextured (const dReal pos[3], const dReal R[12],dReal length, dReal radius,int tex_id,bool robot=false);
