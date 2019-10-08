@@ -18,13 +18,15 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 
 #include "pbox.h"
 
-PBox::PBox(dReal x,dReal y,dReal z,dReal w,dReal h,dReal l,dReal mass,dReal r,dReal g,dReal b)
+PBox::PBox(dReal x,dReal y,dReal z,dReal w,dReal h,dReal l,dReal mass,dReal r,dReal g,dReal b,int tex_id,bool robot)
        : PObject(x,y,z,r,g,b,mass)
 {
 
     m_w = w;
     m_h = h;
     m_l = l;
+    m_texid = tex_id;
+    m_robot = robot;
 }
 
 PBox::~PBox()
@@ -36,7 +38,7 @@ void PBox::init()
   body = dBodyCreate (world);
   initPosBody();
   setMass(m_mass);
-  geom = dCreateBox (0,m_w,m_h,m_l);
+  geom = dCreateBox (nullptr,m_w,m_h,m_l);
   dGeomSetBody (geom,body);
   dSpaceAdd (space,geom);
 }
@@ -53,5 +55,6 @@ void PBox::draw()
 {
     PObject::draw();
     dReal dim[3] = {m_w,m_h,m_l};
-    g->drawBox (dGeomGetPosition(geom),dGeomGetRotation(geom),dim);
+	if (m_texid==-1) g->drawBox (dGeomGetPosition(geom),dGeomGetRotation(geom),dim);
+	else g->drawBox_TopTextured (dGeomGetPosition(geom),dGeomGetRotation(geom),dim, m_texid, m_robot);
 }
