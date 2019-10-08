@@ -97,24 +97,13 @@ public:
     double RobotRadius;
     double RobotHeight;
     double BottomHeight;
-    double KickerZ;
-    double KickerThickness;
-    double KickerWidth;
-    double KickerHeight;
     double WheelRadius;
     double WheelThickness;
     double Wheel1Angle;
     double Wheel2Angle;
-    double Wheel3Angle;
-    double Wheel4Angle;
     //physical settings
     double BodyMass;
     double WheelMass;
-    double KickerMass;
-    double KickerDampFactor;
-    double RollerTorqueFactor;
-    double RollerPerpendicularTorqueFactor;
-    double Kicker_Friction;
     double WheelTangentFriction;
     double WheelPerpendicularFriction;
     double Wheel_Motor_FMax;

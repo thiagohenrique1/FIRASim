@@ -66,6 +66,7 @@ public:
         dReal speed;
         CRobot* rob;
     } *wheels[2];
+    
 
     CRobot(PWorld* world,PBall* ball,ConfigWidget* _cfg,dReal x,dReal y,dReal z,dReal r,dReal g,dReal b,int rob_id,int wheeltexid,int dir);
     ~CRobot();

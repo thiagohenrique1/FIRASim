@@ -271,19 +271,12 @@ void CRobot::setSpeed(int i,dReal s) {
 }
 
 void CRobot::setSpeed(dReal vx, dReal vy, dReal vw) {
-    // Calculate Motor Speeds
-    dReal _DEG2RAD = M_PI / 180.0;
-    dReal motorAlpha[4] = {cfg->robotSettings.Wheel1Angle * _DEG2RAD, cfg->robotSettings.Wheel2Angle * _DEG2RAD, cfg->robotSettings.Wheel3Angle * _DEG2RAD, cfg->robotSettings.Wheel4Angle * _DEG2RAD};
-
-    dReal dw1 =  (1.0 / cfg->robotSettings.WheelRadius) * (( (cfg->robotSettings.RobotRadius * vw) - (vx * sin(motorAlpha[0])) + (vy * cos(motorAlpha[0]))) );
-    dReal dw2 =  (1.0 / cfg->robotSettings.WheelRadius) * (( (cfg->robotSettings.RobotRadius * vw) - (vx * sin(motorAlpha[1])) + (vy * cos(motorAlpha[1]))) );
-    dReal dw3 =  (1.0 / cfg->robotSettings.WheelRadius) * (( (cfg->robotSettings.RobotRadius * vw) - (vx * sin(motorAlpha[2])) + (vy * cos(motorAlpha[2]))) );
-    dReal dw4 =  (1.0 / cfg->robotSettings.WheelRadius) * (( (cfg->robotSettings.RobotRadius * vw) - (vx * sin(motorAlpha[3])) + (vy * cos(motorAlpha[3]))) );
+	// Calculate Motor Speeds
+    dReal dw1 =  (1.0 / cfg->robotSettings.WheelRadius) * ((cfg->robotSettings.RobotRadius *  vw) + vx);
+    dReal dw2 =  (1.0 / cfg->robotSettings.WheelRadius) * ((cfg->robotSettings.RobotRadius * -vw) + vx);
 
     setSpeed(0 , dw1);
     setSpeed(1 , dw2);
-    setSpeed(2 , dw3);
-    setSpeed(3 , dw4);
 }
 
 dReal CRobot::getSpeed(int i) {
