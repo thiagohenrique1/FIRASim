@@ -17,6 +17,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 */
 
 #include "graphics.h"
+#include <iostream>
 #include <QImage>
 #include <math.h>
 
@@ -808,6 +809,7 @@ void CGraphics::_drawBox_TopTextured (const dReal sides[3], int tex_id, bool rob
 	dReal ly = sides[1]*0.5f;
 	dReal lz = sides[2]*0.5f;
 	
+	
 	// sides
 	glBegin (GL_TRIANGLE_STRIP);
 	glNormal3f(-1, 0, 0);
@@ -827,17 +829,24 @@ void CGraphics::_drawBox_TopTextured (const dReal sides[3], int tex_id, bool rob
 	
 	glEnd();
 	
+	glDisable(GL_LIGHTING);
 	useTexture(tex_id);
-	
+	glShadeModel (GL_FLAT);
 	// top face
-	glBegin (GL_TRIANGLE_FAN);
+	glBegin (GL_QUADS);
 	glNormal3f(0, 0, 1);
+	glTexCoord2f(-lx+0.5,-ly+0.5);
 	glVertex3f(-lx, -ly, lz);
+	glTexCoord2f(lx+0.5,-ly+0.5);
 	glVertex3f(lx, -ly, lz);
+	glTexCoord2f(lx+0.5,ly+0.5);
 	glVertex3f(lx, ly, lz);
+	glTexCoord2f(-lx+0.5,ly+0.5);
 	glVertex3f(-lx, ly, lz);
 	glEnd();
-	
+	noTexture();
+	glEnable(GL_LIGHTING);
+
 	// bottom face
 	glBegin (GL_TRIANGLE_FAN);
 	glNormal3f(0, 0, -1);
@@ -846,6 +855,8 @@ void CGraphics::_drawBox_TopTextured (const dReal sides[3], int tex_id, bool rob
 	glVertex3f(lx, ly, -lz);
 	glVertex3f(lx, -ly, -lz);
 	glEnd();
+	
+	
 }
 
 // This is recursively subdivides a triangular area (vertices p1,p2,p3) into
