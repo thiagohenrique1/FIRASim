@@ -41,19 +41,19 @@ class CRobot
     dReal m_dir;
     int m_rob_id;
     bool firsttime;
-    bool last_state;
+    bool last_state{};
 public:    
     ConfigWidget* cfg;
     dSpaceID space;
-    PCylinder* chassis;
+    PObject* chassis;
     PBall* dummy;
     dJointID dummy_to_chassis;
-    PBox* boxes[3];    
+    PBox* boxes[3]{};
     bool on;
     //these values are not controled by this class
-    bool selected;
-    dReal select_x,select_y,select_z;    
-    QImage *img,*number;
+    bool selected{};
+    dReal select_x{},select_y{},select_z{};
+    QImage *img{},*number{};
     class Wheel
     {
       public:
@@ -65,7 +65,7 @@ public:
         PCylinder* cyl;
         dReal speed;
         CRobot* rob;
-    } *wheels[2];
+    } *wheels[2]{};
     
 
     CRobot(PWorld* world,PBall* ball,ConfigWidget* _cfg,dReal x,dReal y,dReal z,dReal r,dReal g,dReal b,int rob_id,int wheeltexid,int dir);
