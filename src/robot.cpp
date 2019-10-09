@@ -78,7 +78,7 @@ CRobot::CRobot(PWorld* world,PBall *ball,ConfigWidget* _cfg,dReal x,dReal y,dRea
 
     space = w->space;
 
-    chassis = new PCylinder(x,y,z,cfg->robotSettings.RobotRadius,cfg->robotSettings.RobotHeight,cfg->robotSettings.BodyMass*0.99f,r,g,b,rob_id,true);
+    chassis = new PBox(x,y,z,cfg->robotSettings.RobotRadius*2,cfg->robotSettings.RobotHeight,cfg->robotSettings.RobotRadius*2,cfg->robotSettings.BodyMass*0.99f,r,g,b,rob_id,true);
     chassis->space = space;
     w->addObject(chassis);
 
@@ -97,9 +97,7 @@ CRobot::CRobot(PWorld* world,PBall *ball,ConfigWidget* _cfg,dReal x,dReal y,dRea
 }
 
 CRobot::~CRobot()
-{
-
-}
+= default;
 
 PBall* CRobot::getBall()
 {
