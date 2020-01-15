@@ -24,9 +24,9 @@
 #include <string>
 #include <QMutex>
 
-#include "replacement.pb.h"
-#include "command.pb.h"
-#include "packet.pb.h"
+#include "SIM2REF/replacement.pb.h"
+#include "SIM2REF/command.pb.h"
+#include "SIM2REF/packet.pb.h"
 
 using namespace std;
 
@@ -49,7 +49,7 @@ public:
 
     bool open();
     void close();
-    bool receive(Packet & packet);
+    bool receive(fira_message::sim_to_ref::Packet & packet);
     inline void changePort(quint16 port) {_port = port;}
 
 protected:

@@ -73,7 +73,7 @@ bool RoboCupSSLClient::open()
     return true;
 }
 
-bool RoboCupSSLClient::receive(Packet &packet)
+bool RoboCupSSLClient::receive(fira_message::sim_to_ref::Packet &packet)
 {
     if(_socket->state() == QUdpSocket::BoundState && _socket->hasPendingDatagrams()) {
         QByteArray datagram;

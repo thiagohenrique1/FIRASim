@@ -20,9 +20,7 @@
 */
 //========================================================================
 #include "robocup_ssl_server.h"
-#include <QtNetwork>
-#include <iostream>
-#include "logger.h"
+
 
 using namespace std;
 
@@ -61,7 +59,7 @@ void RoboCupSSLServer::change_interface(const string & net_interface)
     _net_interface = new QNetworkInterface(QNetworkInterface::interfaceFromName(QString(net_interface.c_str())));
 }
 
-bool RoboCupSSLServer::send(const Environment & env)
+bool RoboCupSSLServer::send(const fira_message::sim_to_ref::Environment & env)
 {
     QByteArray datagram;
 

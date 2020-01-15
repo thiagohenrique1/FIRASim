@@ -44,8 +44,8 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 class RobotsFomation;
 class SendingPacket {
     public:
-    SendingPacket(Environment* _packet,int _t);
-    Environment* packet;
+    SendingPacket(fira_message::sim_to_ref::Environment* _packet,int _t);
+    fira_message::sim_to_ref::Environment* packet;
     int t;
 };
 
@@ -68,7 +68,7 @@ public:
     virtual ~SSLWorld();
     void glinit();
     void step(dReal dt=-1);
-    Environment* generatePacket();
+    fira_message::sim_to_ref::Environment* generatePacket();
     void sendVisionBuffer();
     int  robotIndex(unsigned int robot, int team);
 

@@ -24,8 +24,11 @@
 #include <string>
 #include <QMutex>
 #include <QObject>
+#include <QtNetwork>
+#include <iostream>
 
-#include "enviroment.pb.h"
+#include "logger.h"
+#include "SIM2REF/packet.pb.h"
 
 using namespace std;
 
@@ -37,14 +40,14 @@ class RoboCupSSLServer
 {
 friend class MultiStackRoboCupSSL;
 public:
-    RoboCupSSLServer(QObject *parent=nullptr,
+    explicit RoboCupSSLServer(QObject *parent=nullptr,
                      const quint16 &port=10002,
                      const string &net_address="224.5.23.2",
                      const string &net_interface="");
 
     ~RoboCupSSLServer();
 
-    bool send(const Environment & env);
+    bool send(const fira_message::sim_to_ref::Environment & env);
     void change_port(const quint16 &port);
     void change_address(const string & net_address);
     void change_interface(const string & net_interface);

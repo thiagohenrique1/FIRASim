@@ -25,11 +25,11 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 
 #include "logger.h"
 
-#include "command.pb.h"
-#include "enviroment.pb.h"
-#include "packet.pb.h"
-#include "replacement.pb.h"
+#include "SIM2REF/command.pb.h"
+#include "SIM2REF/packet.pb.h"
+#include "SIM2REF/replacement.pb.h"
 
+using namespace fira_message::sim_to_ref;
 
 #define ROBOT_GRAY 0.4
 #define WHEEL_COUNT 2
@@ -265,20 +265,20 @@ SSLWorld::SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form1,Ro
     ball_ground->callback = ballCallBack;
     
     
-    for (int i = 0; i < WALL_COUNT; i++)
-        p->createSurface(ball, walls[i])->surface = ballwithwall.surface;
+    for (auto & wall : walls)
+        p->createSurface(ball, wall)->surface = ballwithwall.surface;
     
     for (int k = 0; k < 2 * cfg->Robots_Count(); k++)
     {
         p->createSurface(robots[k]->chassis,ground);
-        for (int j = 0; j < WALL_COUNT; j++)
-            p->createSurface(robots[k]->chassis,walls[j]);
+        for (auto & wall : walls)
+            p->createSurface(robots[k]->chassis,wall);
         p->createSurface(robots[k]->dummy,ball);
         //p->createSurface(robots[k]->chassis,ball);
-        for (int j = 0; j < WHEEL_COUNT; j++)
+        for (auto & wheel : robots[k]->wheels)
         {
-            p->createSurface(robots[k]->wheels[j]->cyl,ball);
-            PSurface* w_g = p->createSurface(robots[k]->wheels[j]->cyl,ground);
+            p->createSurface(wheel->cyl,ball);
+            PSurface* w_g = p->createSurface(wheel->cyl,ground);
             w_g->surface=wheelswithground.surface;
             w_g->usefdir1=true;
             w_g->callback=wheelCallBack;
@@ -506,28 +506,20 @@ void SSLWorld::recvActions()
             packet.ParseFromArray(in_buffer, static_cast<int>(size));
             if (packet.has_cmd()) {
                 for (const auto& robot_cmd : packet.cmd().robot_commands()) {
-                    if (!robot_cmd.has_id()) continue;
                     int id = robotIndex(robot_cmd.id(), robot_cmd.yellowteam());
                     if ((id < 0) || (id >= cfg->Robots_Count()*2)) continue;
-                    if (robot_cmd.has_wheelsspeed() && robot_cmd.wheelsspeed()) {
-                        if (robot_cmd.has_wheel_left())  robots[id]->setSpeed(0, robot_cmd.wheel_left());
-                        if (robot_cmd.has_wheel_right()) robots[id]->setSpeed(1, robot_cmd.wheel_right());
-                    } else {
-                        dReal vx = 0;if (robot_cmd.has_vel_normal())  vx = robot_cmd.vel_normal();
-                        dReal vw = 0;if (robot_cmd.has_vel_angular()) vw = robot_cmd.vel_angular();
-                        robots[id]->setSpeed(vx, 0.0, vw);
-                    }
+                        robots[id]->setSpeed(0, robot_cmd.wheel_left());
+                        robots[id]->setSpeed(1, robot_cmd.wheel_right());
                 }
 
             }
             if (packet.has_replace()) {
                 for (const auto& replace : packet.replace().robots()) {
-                    if (!replace.has_id()) continue;
-                    int id = robotIndex(replace.id(), replace.yellowteam());
+                    int id = robotIndex(replace.position().robot_id(), replace.yellowteam());
                     if ((id < 0) || (id >= cfg->Robots_Count()*2)) continue;
-                    if (replace.has_x() && replace.has_y()) robots[id]->setXY(replace.x(), replace.y());
-                    if (replace.has_dir()) robots[id]->setDir(replace.dir());
-                    if (replace.has_turnon()) robots[id]->on = replace.turnon();
+                    robots[id]->setXY(replace.position().x(), replace.position().y());
+                    robots[id]->setDir(replace.position().orientation());
+                    robots[id]->on = replace.turnon();
                 }
                 if (packet.replace().has_ball()) {
                     dReal x = 0, y = 0, z = 0, vx = 0, vy = 0;
@@ -536,10 +528,10 @@ void SSLWorld::recvActions()
                     vx = vel_vec[0];
                     vy = vel_vec[1];
 
-                    if (packet.replace().ball().has_x())  x  = packet.replace().ball().x();
-                    if (packet.replace().ball().has_y())  y  = packet.replace().ball().y();
-                    if (packet.replace().ball().has_vx()) vx = packet.replace().ball().vx();
-                    if (packet.replace().ball().has_vy()) vy = packet.replace().ball().vy();
+                    x  = packet.replace().ball().x();
+                    y  = packet.replace().ball().y();
+                    vx = packet.replace().ball().vx();
+                    vy = packet.replace().ball().vy();
 
                     ball->setBodyPosition(x,y,cfg->BallRadius()*1.2);
                     dBodySetLinearVel(ball->body,vx,vy,0);
@@ -560,45 +552,42 @@ dReal normalizeAngle(dReal a)
 #define CONVUNIT(x) ((int)(1000*(x)))
 Environment* SSLWorld::generatePacket()
 {
-    Environment* packet = new Environment;
+    auto* env = new Environment;
     dReal x,y,z,dir,k;
     ball->getBodyPosition(x,y,z);    
     dReal dev_x = cfg->noiseDeviation_x();
     dReal dev_y = cfg->noiseDeviation_y();
     dReal dev_a = cfg->noiseDeviation_angle();
-    if (cfg->noise()==false) {dev_x = 0;dev_y = 0;dev_a = 0;}
-    if ((cfg->vanishing()==false) || (rand0_1() > cfg->ball_vanishing()))
+    if (!cfg->noise()) { dev_x = 0;dev_y = 0;dev_a = 0;}
+    if (!cfg->vanishing() || (rand0_1() > cfg->ball_vanishing()))
     {
-        Ball* vball = packet->mutable_frame()->mutable_ball();
+        auto* vball = env->mutable_frame()->mutable_ball();
         vball->set_x(randn_notrig(x*1000.0,dev_x));
         vball->set_y(randn_notrig(y*1000.0,dev_y));
         vball->set_z(z*1000.0);
     }
     for(uint32_t i = 0; i < cfg->Robots_Count()*2; i++) {
-        if ((cfg->vanishing()==false) || (rand0_1() > cfg->blue_team_vanishing()))
-        {
+        if (!cfg->vanishing() || (rand0_1() > cfg->blue_team_vanishing())){
             if (!robots[i]->on) continue;
             robots[i]->getXY(x,y);
             dir = robots[i]->getDir(k);
             // reset when the robot has turned over
-            if (cfg->ResetTurnOver()) {
-                if (k < 0.9) {
+            if (cfg->ResetTurnOver() && k < 0.9) {
                     robots[i]->resetRobot();
-                }
             }
-            Robot* rob;
-            if (i < cfg->Robots_Count()) rob = packet->mutable_frame()->add_robots_blue();
-            else rob = packet->mutable_frame()->add_robots_yellow();
+            fira_message::Robot* rob;
+            if (i < cfg->Robots_Count()) rob = env->mutable_frame()->add_robots_blue();
+            else rob = env->mutable_frame()->add_robots_yellow();
             rob->set_robot_id(i);
             rob->set_x(randn_notrig(x*1000.0,dev_x));
             rob->set_y(randn_notrig(y*1000.0,dev_y));
             rob->set_orientation(normalizeAngle(randn_notrig(dir,dev_a))*M_PI/180.0);
         }
     }
-    return packet;
+    return env;
 }
 
-SendingPacket::SendingPacket(Environment *_packet, int _t)
+SendingPacket::SendingPacket(fira_message::sim_to_ref::Environment *_packet, int _t)
 {
     packet = _packet;
     t      = _t;

@@ -116,11 +116,12 @@ include_directories(${PROTOBUF_INCLUDE_DIRS})
 list(APPEND libs ${PROTOBUF_LIBRARIES})
 
 protobuf_generate_cpp(PROTO_CPP PROTO_H
-    src/proto/command.proto
-    src/proto/enviroment.proto
-    src/proto/packet.proto
-    src/proto/replacement.proto
-)
+        FIRAMessage/common.proto
+        FIRAMessage/command.proto
+        FIRAMessage/replacement.proto
+        FIRAMessage/packet.proto
+
+        )
 
 qt5_add_resources(RESOURCES
     resources/textures.qrc
@@ -181,6 +182,8 @@ set(HEADERS
 )
 
 # files to be compiled
+message(${PROTO_CPP})
+
 set(srcs
     ${CONFIG_FILES}
     ${PROTO_CPP}
