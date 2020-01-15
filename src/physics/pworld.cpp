@@ -19,7 +19,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include "pworld.h"
 PSurface::PSurface()
 {
-  callback = NULL;
+  callback = nullptr;
   usefdir1 = false;
   surface.mode = dContactApprox1;
   surface.mu = 0.5;
@@ -46,7 +46,7 @@ PWorld::PWorld(dReal dt,dReal gravity,CGraphics* graphics, int _robot_count)
     contactgroup = dJointGroupCreate (0);
     dWorldSetGravity (world,0,0,-gravity);
     objects_count = 0;
-    sur_matrix = NULL;
+    sur_matrix = nullptr;
     //dAllocateODEDataForThread(dAllocateMaskAll);
     delta_time = dt;
     g = graphics;
@@ -83,7 +83,7 @@ void PWorld::handleCollisions(dGeomID o1, dGeomID o2)
           sur->contactNormal[1] = contact[0].geom.normal[1];
           sur->contactNormal[2] = contact[0].geom.normal[2];
           bool flag=true;
-          if (sur->callback!=NULL) flag = sur->callback(o1,o2,sur,robot_count);
+          if (sur->callback!=nullptr) flag = sur->callback(o1,o2,sur,robot_count);
           if (flag)
           for (int i=0; i<n; i++) {
               contact[i].surface = sur->surface;
@@ -109,8 +109,8 @@ void PWorld::addObject(PObject* o)
 {      
     int id = objects.count();
     o->id = id;
-    if (o->world==NULL) o->world = world;
-    if (o->space==NULL) o->space = space;
+    if (o->world==nullptr) o->world = world;
+    if (o->space==nullptr) o->space = space;
     o->g = g;
     o->init();
     dGeomSetData(o->geom,(void*)(&(o->id)));
@@ -122,7 +122,7 @@ void PWorld::initAllObjects()
     objects_count = objects.count();
     int c = objects_count;
     bool flag = false;
-    if (sur_matrix!=NULL)
+    if (sur_matrix!= nullptr)
     {
         for (int i=0;i<c;i++)
             delete sur_matrix[i];
@@ -146,7 +146,7 @@ void PWorld::initAllObjects()
 
 PSurface* PWorld::createSurface(PObject* o1,PObject* o2)
 {
-    PSurface *s = new PSurface();
+    auto *s = new PSurface();
     s->id1 = o1->geom;
     s->id2 = o2->geom;
     surfaces.append(s);
@@ -161,7 +161,7 @@ PSurface* PWorld::findSurface(PObject* o1,PObject* o2)
     {
         if (surfaces[i]->isIt(o1->geom,o2->geom)) return (surfaces[i]);
     }
-    return NULL;
+    return nullptr;
 }
 
 void PWorld::step(dReal dt)
