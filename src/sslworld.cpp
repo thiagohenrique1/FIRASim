@@ -31,7 +31,6 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 
 using namespace fira_message::sim_to_ref;
 
-#define ROBOT_GRAY 0.4
 #define WHEEL_COUNT 2
 
 SSLWorld* _w;
@@ -127,9 +126,8 @@ bool ballCallBack(dGeomID o1,dGeomID o2,PSurface* s, int /*robots_count*/)
     return true;
 }
 
-SSLWorld::SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form1,RobotsFomation *form2)
-    : QObject(parent)
-{    
+SSLWorld::SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form)
+    : QObject(parent) {
     isGLEnabled = true;
     customDT = -1;    
     _w = this;
@@ -214,32 +212,27 @@ SSLWorld::SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form1,Ro
     p->addObject(ground);
     p->addObject(ball);
     p->addObject(ray);
-    for (int i=0;i<10;i++)
-        p->addObject(walls[i]);
+    for (auto & wall : walls) p->addObject(wall);
     const int wheeltexid = 4 * cfg->Robots_Count() + 12 + 1 ; //37 for 6 robots
 
 
     cfg->robotSettings = cfg->blueSettings;
-    for (int k=0;k<cfg->Robots_Count();k++) {
-        float a1 = -form1->x[k];
-        float a2 = form1->y[k];
-        float a3 = ROBOT_START_Z(cfg);
-        robots[k] = new CRobot(p,
-                              ball,
-                              cfg,
-                              -form1->x[k],
-                              form1->y[k],
-                              ROBOT_START_Z(cfg),
-                              ROBOT_GRAY,
-                              ROBOT_GRAY,
-                              ROBOT_GRAY,
-                              k + 1,
-                              wheeltexid,
-                              1);
+    for (int k=0;k<cfg->Robots_Count()*2;k++) {
+        float x = -form->x[k];
+        float y = form->y[k];
+        float dir = 1.0;
+        if (k > cfg->Robots_Count()) {
+            cfg->robotSettings = cfg->yellowSettings;
+            x = form->x[k - cfg->Robots_Count()];
+            y = -form->y[k - cfg->Robots_Count()];
+            dir = -1;
+        }
+        robots[k] = new CRobot(
+                p,ball,cfg,
+                x,y,ROBOT_START_Z(cfg),
+                ROBOT_GRAY,ROBOT_GRAY,ROBOT_GRAY,
+                k + 1,wheeltexid,dir);
     }
-    cfg->robotSettings = cfg->yellowSettings;
-    for (int k=0;k<cfg->Robots_Count();k++)
-        robots[k+cfg->Robots_Count()] = new CRobot(p,ball,cfg,form2->x[k],form2->y[k],ROBOT_START_Z(cfg),ROBOT_GRAY,ROBOT_GRAY,ROBOT_GRAY,k+cfg->Robots_Count()+1,wheeltexid,-1);//XXX
 
     p->initAllObjects();
 
@@ -279,6 +272,14 @@ SSLWorld::SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form1,Ro
         {
             p->createSurface(wheel->cyl,ball);
             PSurface* w_g = p->createSurface(wheel->cyl,ground);
+            w_g->surface=wheelswithground.surface;
+            w_g->usefdir1=true;
+            w_g->callback=wheelCallBack;
+        }
+        for (auto & b : robots[k]->balls)
+        {
+//            p->createSurface(b->pBall,ball);
+            PSurface* w_g = p->createSurface(b->pBall,ground);
             w_g->surface=wheelswithground.surface;
             w_g->usefdir1=true;
             w_g->callback=wheelCallBack;
