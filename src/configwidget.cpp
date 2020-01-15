@@ -40,11 +40,11 @@ ConfigWidget::ConfigWidget()
 
   VarListPtr game_vars(new VarList("Game"));
   geo_vars->addChild(game_vars);
-  ADD_ENUM(StringEnum, Division, "Division A", "Division")
+  ADD_ENUM(StringEnum, Division, "Division B", "Division")
   ADD_TO_ENUM(Division, "Division A");
   ADD_TO_ENUM(Division, "Division B");
   END_ENUM(game_vars, Division);
-  ADD_VALUE(game_vars,Int, Robots_Count, 8, "Robots Count")
+  ADD_VALUE(game_vars,Int, Robots_Count, 5, "Robots Count")
   VarListPtr fields_vars(new VarList("Field"));
   VarListPtr div_a_vars(new VarList("Division A"));
   VarListPtr div_b_vars(new VarList("Division B"));
@@ -69,8 +69,8 @@ ConfigWidget::ConfigWidget()
   ADD_VALUE(div_a_vars, Double, DivA_Goal_Height,0.160,"Goal height")
 
   ADD_VALUE(div_b_vars, Double, DivB_Field_Line_Width,0.010,"Line Thickness")
-  ADD_VALUE(div_b_vars, Double, DivB_Field_Length,9.000,"Length")
-  ADD_VALUE(div_b_vars, Double, DivB_Field_Width,6.000,"Width")
+  ADD_VALUE(div_b_vars, Double, DivB_Field_Length,2.200,"Length")
+  ADD_VALUE(div_b_vars, Double, DivB_Field_Width,1.800,"Width")
   ADD_VALUE(div_b_vars, Double, DivB_Field_Rad,0.500,"Radius")
   ADD_VALUE(div_b_vars, Double, DivB_Field_Free_Kick,0.700,"Free Kick Distance From Defense Area")
   ADD_VALUE(div_b_vars, Double, DivB_Field_Penalty_Width,2.00,"Penalty width")
@@ -225,6 +225,8 @@ void ConfigWidget::loadRobotSettings(QString team)
     robotSettings.WheelThickness = robot_settings->value("Geometery/WheelThickness", 0.005).toDouble();
     robotSettings.Wheel1Angle = robot_settings->value("Geometery/Wheel1Angle", 60).toDouble();
     robotSettings.Wheel2Angle = robot_settings->value("Geometery/Wheel2Angle", 135).toDouble();
+    robotSettings.BallRadius = robot_settings->value("Geometery/BallRadius", 0.002).toDouble();
+    robotSettings.BallMass = robot_settings->value("Geometery/BallMass", 0.001).toDouble();
 
     robotSettings.BodyMass  = robot_settings->value("Physics/BodyMass", 2).toDouble();
     robotSettings.WheelMass = robot_settings->value("Physics/WheelMass", 0.2).toDouble();

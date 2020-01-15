@@ -101,6 +101,8 @@ public:
     double WheelThickness;
     double Wheel1Angle;
     double Wheel2Angle;
+    double BallRadius;
+    double BallMass;
     //physical settings
     double BodyMass;
     double WheelMass;

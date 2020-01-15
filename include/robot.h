@@ -25,6 +25,9 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include "physics/pball.h"
 #include "configwidget.h"
 
+#define ROBOT_GRAY 0.4
+
+
 enum KickStatus
 {
     NO_KICK = 0,
@@ -66,7 +69,19 @@ public:
         dReal speed;
         CRobot* rob;
     } *wheels[2]{};
-    
+
+    class RBall
+    {
+    public:
+        int id;
+        RBall(CRobot* robot,int _id,dReal ang,dReal ang2);
+        void step();
+        dJointID joint;
+        PBall* pBall;
+        dReal speed;
+        CRobot* rob;
+    } *balls[2]{};
+
 
     CRobot(PWorld* world,PBall* ball,ConfigWidget* _cfg,dReal x,dReal y,dReal z,dReal r,dReal g,dReal b,int rob_id,int wheeltexid,int dir);
     ~CRobot();
@@ -89,6 +104,6 @@ public:
 };
 
 
-#define ROBOT_START_Z(cfg)  (cfg->robotSettings.RobotHeight*0.5 + cfg->robotSettings.WheelRadius*1.1 + cfg->robotSettings.BottomHeight)
+#define ROBOT_START_Z(cfg)  (cfg->robotSettings.RobotHeight*0.5 + cfg->robotSettings.WheelRadius*1 + cfg->robotSettings.BottomHeight)
 
 #endif // ROBOT_H

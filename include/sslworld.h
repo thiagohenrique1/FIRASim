@@ -57,14 +57,14 @@ private:
     int framenum;
     dReal last_dt;
     QList<SendingPacket*> sendQueue;
-    char packet[200];
+    char packet[200]{};
     char *in_buffer;
-    bool lastInfraredState[TEAM_COUNT][MAX_ROBOT_COUNT];
-    KickStatus lastKickState[TEAM_COUNT][MAX_ROBOT_COUNT];    
+    bool lastInfraredState[TEAM_COUNT][MAX_ROBOT_COUNT]{};
+    KickStatus lastKickState[TEAM_COUNT][MAX_ROBOT_COUNT]{};
 public:    
     dReal customDT;
     bool isGLEnabled;
-    SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form1,RobotsFomation *form2);
+    SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form);
     virtual ~SSLWorld();
     void glinit();
     void step(dReal dt=-1);
@@ -78,16 +78,16 @@ public:
     PBall* ball;
     PGround* ground;
     PRay* ray;
-    PFixedBox* walls[WALL_COUNT];
-    int selected;
+    PFixedBox* walls[WALL_COUNT]{};
+    int selected{};
     bool show3DCursor;
-    dReal cursor_x,cursor_y,cursor_z;
-    dReal cursor_radius;
-    RoboCupSSLServer *visionServer;
-    QUdpSocket *commandSocket;
-    QUdpSocket *blueStatusSocket,*yellowStatusSocket;
+    dReal cursor_x{},cursor_y{},cursor_z{};
+    dReal cursor_radius{};
+    RoboCupSSLServer *visionServer{};
+    QUdpSocket *commandSocket{};
+    QUdpSocket *blueStatusSocket{},*yellowStatusSocket{};
     bool updatedCursor;
-    CRobot* robots[MAX_ROBOT_COUNT*2];
+    CRobot* robots[MAX_ROBOT_COUNT*2]{};
     QTime *timer;
     int sendGeomCount;
 public slots:
