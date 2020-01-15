@@ -401,7 +401,7 @@ void MainWindow::changeBallDamping()
 void MainWindow::restartSimulator()
 {        
     delete glwidget->ssl;
-    glwidget->ssl = new SSLWorld(glwidget,glwidget->cfg,glwidget->forms[2],glwidget->forms[2]);
+    glwidget->ssl = new SSLWorld(glwidget,glwidget->cfg,glwidget->forms[2]);
     glwidget->ssl->glinit();
     glwidget->ssl->visionServer = visionServer;
     glwidget->ssl->commandSocket = commandSocket;
