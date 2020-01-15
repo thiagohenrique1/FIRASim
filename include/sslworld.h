@@ -39,7 +39,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include "configwidget.h"
 
 #include "config.h"
-#define WALL_COUNT 10
+#define WALL_COUNT 16
 
 class RobotsFomation;
 class SendingPacket {
@@ -65,7 +65,7 @@ public:
     dReal customDT;
     bool isGLEnabled;
     SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form);
-    virtual ~SSLWorld();
+    ~SSLWorld() override;
     void glinit();
     void step(dReal dt=-1);
     fira_message::sim_to_ref::Environment* generatePacket();
