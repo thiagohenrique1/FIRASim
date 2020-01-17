@@ -113,12 +113,12 @@ CRobot::CRobot(PWorld* world,PBall *ball,ConfigWidget* _cfg,dReal x,dReal y,dRea
     chassis->space = space;
     w->addObject(chassis);
 
-    dummy   = new PBall(x,y,z,cfg->robotSettings.RobotCenterFromKicker,cfg->robotSettings.BodyMass*0.01f,0,0,0);
+    dummy   = new PBox(x,y,z,cfg->robotSettings.RobotRadius*2,cfg->robotSettings.RobotRadius*2,cfg->robotSettings.RobotHeight, cfg->robotSettings.BodyMass*0.99f,r,g,b,rob_id,true);
     dummy->setVisibility(false);
     dummy->space = space;
     w->addObject(dummy);
 
-    dummy_to_chassis = dJointCreateFixed(world->world,0);
+    dummy_to_chassis = dJointCreateFixed(world->world,nullptr);
     dJointAttach (dummy_to_chassis,chassis->body,dummy->body);
 
     wheels[0] = new Wheel(this,0,cfg->robotSettings.Wheel1Angle,cfg->robotSettings.Wheel1Angle,wheeltexid);

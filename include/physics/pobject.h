@@ -28,9 +28,9 @@ private:
 protected:
     dReal m_x,m_y,m_z,m_red,m_green,m_blue;
     dReal m_mass;
-    dMatrix3 local_Rot;
-    dVector3 local_Pos;
-    dQuaternion q;
+    dMatrix3 local_Rot{};
+    dVector3 local_Pos{};
+    dQuaternion q{};
     void initPosBody();
     void initPosGeom();
     bool visible;
@@ -57,9 +57,9 @@ public:
     dGeomID geom;
     dWorldID world;
     dSpaceID space;
-    CGraphics *g;
+    CGraphics *graphics{};
     int tag;
-    int id;
+    int id{};
 };
 
 #endif // POBJECT_H

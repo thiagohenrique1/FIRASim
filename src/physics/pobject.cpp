@@ -20,10 +20,10 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 
 PObject::PObject(dReal x,dReal y,dReal z,dReal red,dReal green,dReal blue,dReal mass)
 {
-    geom = NULL;
-    body = NULL;
-    world = NULL;
-    space = NULL;
+    geom = nullptr;
+    body = nullptr;
+    world = nullptr;
+    space = nullptr;
     m_x = x;
     m_y = y;
     m_z = z;
@@ -63,8 +63,8 @@ void PObject::getColor(dReal& r,dReal& g,dReal& b)
 
 PObject::~PObject()
 {
-    if (geom!=NULL) dGeomDestroy(geom);
-    if (body!=NULL) dBodyDestroy(body);
+    if (geom!=nullptr) dGeomDestroy(geom);
+    if (body!=nullptr) dBodyDestroy(body);
 }
 
 void PObject::setRotation(dReal x_axis,dReal y_axis,dReal z_axis,dReal ang)
@@ -164,6 +164,6 @@ void PObject::glinit()
 
 void PObject::draw()
 {
-    g->setColor(m_red,m_green,m_blue,1);
+    graphics->setColor(m_red, m_green, m_blue, 1);
 }
 

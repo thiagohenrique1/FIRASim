@@ -49,7 +49,7 @@ public:
     ConfigWidget* cfg;
     dSpaceID space;
     PObject* chassis;
-    PBall* dummy;
+    PBox* dummy;
     dJointID dummy_to_chassis;
     PBox* boxes[3]{};
     bool on;

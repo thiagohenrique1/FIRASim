@@ -111,7 +111,7 @@ void PWorld::addObject(PObject* o)
     o->id = id;
     if (o->world==nullptr) o->world = world;
     if (o->space==nullptr) o->space = space;
-    o->g = g;
+    o->graphics = g;
     o->init();
     dGeomSetData(o->geom,(void*)(&(o->id)));
     objects.append(o);

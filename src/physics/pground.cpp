@@ -40,10 +40,10 @@ void PGround::init()
 void PGround::draw()
 {
     PObject::draw();
-    g->useTexture(tex);
-    g->drawGround();
-    g->noTexture();
-    g->drawSSLGround(rad,len,wid,pdep,pwid,ppoint,lwidth,0.0001);
+    graphics->useTexture(tex);
+    graphics->drawGround();
+    graphics->noTexture();
+    graphics->drawSSLGround(rad, len, wid, pdep, pwid, ppoint, lwidth, 0.0001);
 }
 
 PGround::~PGround()

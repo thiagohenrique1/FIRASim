@@ -50,5 +50,5 @@ void PBall::setMass(dReal mass)
 void PBall::draw()
 {
   PObject::draw();
-  g->drawSphere(dBodyGetPosition(body),dBodyGetRotation(body),m_radius);
+  graphics->drawSphere(dBodyGetPosition(body), dBodyGetRotation(body), m_radius);
 }

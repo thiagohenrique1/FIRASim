@@ -201,27 +201,27 @@ SSLWorld::SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form)
     // Goal walls
     walls[4] = new PFixedBox(gpos_x, 0.0, gpos_z,
                              gthick, gsiz_y, gsiz_z,
-                             tone, tone, tone);
+                             1, 1, 0);
     
     walls[5] = new PFixedBox(gpos2_x, -gpos_y, gpos_z,
                              gsiz_x, gthick, gsiz_z,
-                             tone, tone, tone);
+                             1, 1, 0);
     
     walls[6] = new PFixedBox(gpos2_x, gpos_y, gpos_z,
                              gsiz_x, gthick, gsiz_z,
-                             tone, tone, tone);
+                             1, 1, 0);
 
     walls[7] = new PFixedBox(-gpos_x, 0.0, gpos_z,
                              gthick, gsiz_y, gsiz_z,
-                             tone, tone, tone);
+                             0, 0, 1);
     
     walls[8] = new PFixedBox(-gpos2_x, -gpos_y, gpos_z,
                              gsiz_x, gthick, gsiz_z,
-                             tone, tone, tone);
+                             0, 0, 1);
     
     walls[9] = new PFixedBox(-gpos2_x, gpos_y, gpos_z,
                              gsiz_x, gthick, gsiz_z,
-                             tone, tone, tone);
+                             0, 0, 1);
 
     // Corner Wall
     walls[12] = new PFixedBox(-pos_x + gsiz_x/2.8, pos_y - gsiz_x/2.8, pos_z,

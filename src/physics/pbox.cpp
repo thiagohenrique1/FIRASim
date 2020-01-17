@@ -55,6 +55,6 @@ void PBox::draw()
 {
     PObject::draw();
     dReal dim[3] = {m_w,m_h,m_l};
-	if (m_texid==-1) g->drawBox (dGeomGetPosition(geom),dGeomGetRotation(geom),dim);
-	else g->drawBox_TopTextured (dGeomGetPosition(geom),dGeomGetRotation(geom),dim, m_texid, m_robot);
+	if (m_texid==-1) graphics->drawBox (dGeomGetPosition(geom), dGeomGetRotation(geom), dim);
+	else graphics->drawBox_TopTextured (dGeomGetPosition(geom), dGeomGetRotation(geom), dim, m_texid, m_robot);
 }

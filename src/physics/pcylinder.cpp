@@ -54,7 +54,7 @@ void PCylinder::draw()
 {
     PObject::draw();    
     if (m_texid==-1)
-        g->drawCylinder(dBodyGetPosition(body),dBodyGetRotation(body),m_length,m_radius);
+        graphics->drawCylinder(dBodyGetPosition(body), dBodyGetRotation(body), m_length, m_radius);
     else
-        g->drawCylinder_TopTextured(dBodyGetPosition(body),dBodyGetRotation(body),m_length,m_radius,m_texid,m_robot);
+        graphics->drawCylinder_TopTextured(dBodyGetPosition(body), dBodyGetRotation(body), m_length, m_radius, m_texid, m_robot);
 }
