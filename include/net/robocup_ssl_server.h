@@ -28,7 +28,7 @@
 #include <iostream>
 
 #include "logger.h"
-#include "SIM2REF/packet.pb.h"
+#include "packet.pb.h"
 
 using namespace std;
 
