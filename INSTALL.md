@@ -1,14 +1,14 @@
-# GrSim - INSTALL
+# FIRASim - INSTALL
 
 ## Overview
 
-We developed grSim on Ubuntu OS. (Ubuntu 14.04+ tested and is recommended). It is  important that the graphics card driver is installed properly (the official Ubuntu packages for nVidia and AMD(ATI) graphics cards are available). grSim will compile and run in both 32 and 64 bits Linux and Mac OS.
+We developed FIRASim on Ubuntu OS. (Ubuntu 18.04+ tested and is recommended). It is  important that the graphics card driver is installed properly (the official Ubuntu packages for nVidia and AMD(ATI) graphics cards are available). FIRASim will compile and run in 32 and 64 bits Linux, Mac OS and Windows.
 
-GrSim is written in C++, in order to compile it, you will need a working toolchain and a c++ compiler.
+FIRASim is written in C++, in order to compile it, you will need a working toolchain and a c++ compiler.
 
 ## Dependencies
 
-GrSim depends on:
+FIRASim depends on:
 
 - [CMake](https://cmake.org/) version 3.5+ 
 - [OpenGL](https://www.opengl.org)
@@ -41,11 +41,11 @@ $ make
 $ sudo make install
 ```
 
-Next, clone grSim into your preferred location.
+Next, clone FIRASim into your preferred location.
 
 ```bash
-$ cd /path/to/grsim_ws
-$ git clone https://github.com/RoboCup-SSL/grSim.git
+$ cd /path/to/firasim_ws
+$ git clone https://github.com/fira-simurosot/FIRASim.git
 $ cd grSim
 ```
 
@@ -96,12 +96,12 @@ brew doctor
 
 Next we need to install VarTypes manually. Please refer to the documentation above for the procedure. 
 
-The steps to compile grSim on Mac OS is similar to the steps outlines above for Linux:
+The steps to compile FIRASim on Mac OS is similar to the steps outlines above for Linux:
 
 
 ```bash
-$ cd /path/to/grsim_ws
-$ git clone https://github.com/Robocup-SSL/grSim.git
+$ cd /path/to/firasim_ws
+$ git clone https://github.com/fira-simurosot/FIRASim.git
 $ cd ./grSim
 $ mkdir build
 $ cd build
@@ -113,4 +113,4 @@ The binary files (grSim and the sample client) will be placed in `../bin`.
 
 ## Notes on the performance
 
-When running grSim, check the FPS in the status bar. If it is running at **60 FPS** or higher, everything is ok. Otherwise check the graphics card's driver installation and OpenGL settings.
+When running FIRASim, check the FPS in the status bar. If it is running at **60 FPS** or higher, everything is ok. Otherwise check the graphics card's driver installation and OpenGL settings.
