@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 
 
 ## Project branding, version and package mantainer
-project(grSim)
-set(VERSION "1.0.0a2")
-#set(VENDOR "Parsian")
-set(MAINTAINER "Mani Monajjemi <mani.monajjemi@gmail.com>")
+project(FIRASim)
+set(VERSION "1.0.0")
+set(VENDOR "Parsian")
+set(MAINTAINER "Mahi Rahimi <mohammadmahdi76@gmail.com>")
 
 
 # some utils and helper vars
@@ -116,11 +116,10 @@ include_directories(${PROTOBUF_INCLUDE_DIRS})
 list(APPEND libs ${PROTOBUF_LIBRARIES})
 
 protobuf_generate_cpp(PROTO_CPP PROTO_H
-        FIRAMessage/common.proto
-        FIRAMessage/command.proto
-        FIRAMessage/replacement.proto
-        FIRAMessage/packet.proto
-
+        msg/common.proto
+        msg/command.proto
+        msg/replacement.proto
+        msg/packet.proto
         )
 
 qt5_add_resources(RESOURCES
@@ -182,8 +181,6 @@ set(HEADERS
 )
 
 # files to be compiled
-message(${PROTO_CPP})
-
 set(srcs
     ${CONFIG_FILES}
     ${PROTO_CPP}

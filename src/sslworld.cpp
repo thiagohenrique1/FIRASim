@@ -25,9 +25,9 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 
 #include "logger.h"
 
-#include "SIM2REF/command.pb.h"
-#include "SIM2REF/packet.pb.h"
-#include "SIM2REF/replacement.pb.h"
+#include "command.pb.h"
+#include "packet.pb.h"
+#include "replacement.pb.h"
 
 using namespace fira_message::sim_to_ref;
 

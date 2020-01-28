@@ -24,9 +24,9 @@
 #include <string>
 #include <QMutex>
 
-#include "SIM2REF/replacement.pb.h"
-#include "SIM2REF/command.pb.h"
-#include "SIM2REF/packet.pb.h"
+#include "replacement.pb.h"
+#include "command.pb.h"
+#include "packet.pb.h"
 
 using namespace std;
 
