@@ -111,6 +111,69 @@ $ make
 
 The binary files (grSim and the sample client) will be placed in `../bin`. 
 
+
+## Notes on Protobuf on older Linux 
+
+You have to install protobuf3 in order to compile and run the FIRASim.
+If the defualt option for your linux disterbution is protobuf2 please follow the below instruction to install the correct version.
+
+### Remove old versions
+```bash
+  sudo rm -rf /usr/include/google/protobuf
+  sudo rm -rf /usr/lib/libprotobuf*
+  sudo rm -rf /usr/bin/proto*
+  sudo rm -rf /usr/local/include/google/protobuf
+  sudo rm -rf /usr/local/lib/libprotobuf*
+  sudo rm -rf /usr/local/bin/proto*
+```
+
+### Prerequesites
+```bash
+sudo apt-get install autoconf automake libtool curl make g++ unzip
+```
+
+
+### Install protoc3
+``` bash
+#! /bin/bash
+# Make sure you grab the latest version
+curl -OL https://github.com/google/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
+
+# Unzip
+unzip protoc-3.6.1-linux-x86_64.zip -d protoc3
+
+# Move protoc to /usr/local/bin/
+sudo cp -r protoc3/bin/* /usr/local/bin/
+
+# Move protoc3/include to /usr/local/include/
+sudo cp -r protoc3/include/* /usr/local/include/
+
+# Optional: change owner
+sudo chown $USER /usr/local/bin/protoc
+sudo chown -R $USER /usr/local/include/google
+
+sudo ldconfig
+```
+
+### Install libprotobuf
+```bash
+# Make sure you grab the latest version
+curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-all-3.6.1.zip
+
+# Unzip
+unzip protobuf-all-3.6.1.zip -d protobuf-all
+cd protobuf-all
+
+# Installation
+./configure
+make -j 4
+make check
+sudo make install
+sudo ldconfig
+
+```
+
+
 ## Notes on the performance
 
 When running FIRASim, check the FPS in the status bar. If it is running at **60 FPS** or higher, everything is ok. Otherwise check the graphics card's driver installation and OpenGL settings.
