@@ -162,7 +162,7 @@ curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/pr
 
 # Unzip
 unzip protobuf-all-3.6.1.zip -d protobuf-all
-cd protobuf-all
+cd protobuf-all/protobuf-3.6.1
 
 # Installation
 ./configure
