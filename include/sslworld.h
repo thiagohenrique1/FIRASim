@@ -84,11 +84,9 @@ public:
     dReal cursor_radius{};
     RoboCupSSLServer *visionServer{};
     QUdpSocket *commandSocket{};
-    QUdpSocket *blueStatusSocket{},*yellowStatusSocket{};
     bool updatedCursor;
     CRobot* robots[MAX_ROBOT_COUNT*2]{};
     QTime *timer;
-    int sendGeomCount;
 public slots:
     void recvActions();
 signals:
@@ -108,6 +106,5 @@ class RobotsFomation {
 };
 
 dReal fric(dReal f);
-int robotIndex(int robot,int team);
 
 #endif // SSLWORLD_H
