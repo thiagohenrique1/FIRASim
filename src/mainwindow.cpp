@@ -76,12 +76,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     visionServer = nullptr;
     commandSocket = nullptr;
-    blueStatusSocket = nullptr;
-    yellowStatusSocket = nullptr;
     reconnectVisionSocket();
     reconnectCommandSocket();
-    reconnectBlueStatusSocket();
-    reconnectYellowStatusSocket();
 
     glwidget->ssl->visionServer = visionServer;
     glwidget->ssl->commandSocket = commandSocket;
@@ -248,9 +244,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(configwidget->v_VisionMulticastAddr.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectVisionSocket()));
     QObject::connect(configwidget->v_VisionMulticastPort.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectVisionSocket()));
     QObject::connect(configwidget->v_CommandListenPort.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectCommandSocket()));
-    QObject::connect(configwidget->v_BlueStatusSendPort.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectBlueStatusSocket()));
-    QObject::connect(configwidget->v_YellowStatusSendPort.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectYellowStatusSocket()));
-    timer->start();
+g    timer->start();
 
 
     this->showMaximized();

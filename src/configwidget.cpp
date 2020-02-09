@@ -213,7 +213,7 @@ void ConfigWidget::loadRobotsSettings()
     blueSettings = robotSettings;
 }
 
-void ConfigWidget::loadRobotSettings(const const QString&& team)
+void ConfigWidget::loadRobotSettings(const QString&& team)
 {
     QString ss = qApp->applicationDirPath()+QString("/../config/")+QString("%1.ini").arg(team);
     robot_settings = new QSettings(ss, QSettings::IniFormat);

@@ -59,8 +59,6 @@ public slots:
     void customFPS(int fps);
     void showAbout();
     void reconnectCommandSocket();
-    void reconnectYellowStatusSocket();
-    void reconnectBlueStatusSocket();
     void reconnectVisionSocket();
     void recvActions();
     void setIsGlEnabled(bool value);
@@ -84,11 +82,10 @@ private:
     QString current_dir;
 
     QGraphicsScene *scene;
-    GLWidgetGraphicsView *view{}{}{};
+    GLWidgetGraphicsView *view{};
     QSize lastSize;
     RoboCupSSLServer *visionServer;
     QUdpSocket *commandSocket;
-    QUdpSocket *blueStatusSocket,*yellowStatusSocket;
 };
 
 #endif // MAINWINDOW_H

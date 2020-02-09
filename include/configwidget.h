@@ -182,7 +182,7 @@ public:
   DEF_VALUE(std::string, String, plotter_addr)
   DEF_VALUE(int, Int, plotter_port)
   DEF_VALUE(bool, Bool, plotter)  
-  void loadRobotSettings(const const QString&& team);
+  void loadRobotSettings(const QString&& team);
 public slots:  
   void loadRobotsSettings();
 };
