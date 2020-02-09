@@ -28,8 +28,7 @@ PCylinder::PCylinder(dReal x,dReal y,dReal z,dReal radius,dReal length,dReal mas
 }
 
 PCylinder::~PCylinder()
-{
-}
+= default;
 
 
 void PCylinder::setMass(dReal mass)

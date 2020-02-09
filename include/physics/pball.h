@@ -27,10 +27,10 @@ private:
     dReal m_radius;
 public:
     PBall(dReal x,dReal y,dReal z,dReal radius,dReal mass,dReal red,dReal green,dReal blue);
-    virtual ~PBall();
-    virtual void setMass(dReal mass);
-    virtual void init();
-    virtual void draw();
+    ~PBall() override;
+    void setMass(dReal mass) override;
+    void init() override;
+    void draw() override;
 };
 
 #endif // PBALL_H

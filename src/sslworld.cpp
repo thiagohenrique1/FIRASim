@@ -126,7 +126,7 @@ bool ballCallBack(dGeomID o1,dGeomID o2,PSurface* s, int /*robots_count*/)
     return true;
 }
 
-SSLWorld::SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form)
+SSLWorld::SSLWorld(QGLWidget* parent, ConfigWidget* _cfg, RobotsFormation *form)
     : QObject(parent) {
     isGLEnabled = true;
     customDT = -1;    
@@ -135,7 +135,7 @@ SSLWorld::SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form)
     m_parent = parent;
     show3DCursor = false;
     updatedCursor = false;
-    framenum = 0;
+    frame_num = 0;
     last_dt = -1;    
     g = new CGraphics(parent);
     g->setSphereQuality(1);
@@ -327,7 +327,6 @@ SSLWorld::SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form)
             }
         }
     }
-    sendGeomCount = 0;
     timer = new QTime();
     timer->start();
     in_buffer = new char [65536];
@@ -363,8 +362,8 @@ QImage* createBlob(char yb,int i,QImage** res)
 
 QImage* createNumber(int i,int r,int g,int b,int a)
 {
-    QImage* img = new QImage(32,32,QImage::Format_ARGB32);
-    QPainter *p = new QPainter();
+    auto* img = new QImage(32,32,QImage::Format_ARGB32);
+    auto *p = new QPainter();
     QBrush br;
     p->begin(img);
     QColor black(0,0,0,0);
@@ -526,7 +525,7 @@ void SSLWorld::step(dReal dt)
 
 
     sendVisionBuffer();
-    framenum ++;
+    frame_num ++;
 }
 
 void SSLWorld::recvActions()
@@ -643,7 +642,7 @@ void SSLWorld::sendVisionBuffer()
     }
 }
 
-void RobotsFomation::setAll(dReal* xx,dReal *yy)
+void RobotsFormation::setAll(const dReal* xx, const dReal *yy)
 {
     for (int i=0;i<cfg->Robots_Count();i++)
     {
@@ -652,7 +651,7 @@ void RobotsFomation::setAll(dReal* xx,dReal *yy)
     }
 }
 
-RobotsFomation::RobotsFomation(int type, ConfigWidget* _cfg):
+RobotsFormation::RobotsFormation(int type, ConfigWidget* _cfg):
 cfg(_cfg)
 {
     if (type==0)
@@ -704,7 +703,7 @@ cfg(_cfg)
 
 }
 
-void RobotsFomation::loadFromFile(const QString& filename)
+void RobotsFormation::loadFromFile(const QString& filename)
 {
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -730,7 +729,7 @@ void RobotsFomation::loadFromFile(const QString& filename)
     }
 }
 
-void RobotsFomation::resetRobots(CRobot** r,int team)
+void RobotsFormation::resetRobots(CRobot** r, int team)
 {
     dReal dir=-1;
     if (team==1) dir = 1;

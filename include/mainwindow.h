@@ -33,8 +33,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = 0);
-    ~MainWindow();    
+    explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow() override;
 public slots:
     void update();
     void updateRobotLabel();
@@ -84,7 +84,7 @@ private:
     QString current_dir;
 
     QGraphicsScene *scene;
-    GLWidgetGraphicsView *view;
+    GLWidgetGraphicsView *view{}{}{};
     QSize lastSize;
     RoboCupSSLServer *visionServer;
     QUdpSocket *commandSocket;

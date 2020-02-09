@@ -26,8 +26,8 @@ class PRay : public PObject
 private:
     dReal _length;
 public:
-    PRay(dReal length);
-    virtual void init();
+    explicit PRay(dReal length);
+    void init() override;
     void setPose(dReal x,dReal y,dReal z,dReal dx,dReal dy,dReal dz);
 };
 

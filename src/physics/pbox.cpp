@@ -30,8 +30,7 @@ PBox::PBox(dReal x,dReal y,dReal z,dReal w,dReal h,dReal l,dReal mass,dReal r,dR
 }
 
 PBox::~PBox()
-{
-}
+= default;
 
 void PBox::init()
 {

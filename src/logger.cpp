@@ -17,6 +17,8 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 */
 
 #include "logger.h"
+
+#include <utility>
 #include "statuswidget.h"
 CStatusPrinter *printer;
 void initLogger(void* v)
@@ -26,6 +28,6 @@ void initLogger(void* v)
 
 void logStatus(QString s,QColor c)
 {    
-    printer->textBuffer.enqueue(CStatusText(s,c));
+    printer->textBuffer.enqueue(CStatusText(std::move(s),std::move(c)));
 }
 

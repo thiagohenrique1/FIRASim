@@ -47,5 +47,4 @@ void PGround::draw()
 }
 
 PGround::~PGround()
-{
-}
+= default;

@@ -27,8 +27,7 @@ PFixedBox::PFixedBox(dReal x,dReal y,dReal z,dReal w,dReal h,dReal l,dReal r,dRe
 }
 
 PFixedBox::~PFixedBox()
-{
-}
+= default;
 
 void PFixedBox::init()
 {

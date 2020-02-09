@@ -19,7 +19,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include "graphics.h"
 #include <iostream>
 #include <QImage>
-#include <math.h>
+#include <cmath>
 
 
 // light vector. LIGHTZ is implicitly 1
@@ -52,9 +52,7 @@ CGraphics::CGraphics(QGLWidget* _owner)
 }
 
 CGraphics::~CGraphics()
-{
-
-}
+= default;
 
 void CGraphics::disableGraphics()
 {
@@ -148,7 +146,7 @@ dReal CGraphics::renderDepth()
     return m_renderDepth;
 }
 
-void CGraphics::setViewpoint (dReal xyz[3], dReal hpr[3])
+void CGraphics::setViewpoint (const dReal xyz[3], const dReal hpr[3])
 {
     if (xyz) {
         view_xyz[0] = xyz[0];
@@ -176,9 +174,9 @@ void CGraphics::setViewpoint (dReal x,dReal y,dReal z,dReal h,dReal p,dReal r)
 
 void CGraphics::wrapCameraAngles()
 {
-    for (int i=0; i<3; i++) {
-        while (view_hpr[i] > 180) view_hpr[i] -= 360;
-        while (view_hpr[i] < -180) view_hpr[i] += 360;
+    for (double & i : view_hpr) {
+        while (i > 180) i -= 360;
+        while (i < -180) i += 360;
     }
 }
 
@@ -187,8 +185,8 @@ void CGraphics::cameraMotion (int mode, int deltax, int deltay)
     if (graphicDisabled) return;
     dReal side = 0.01f * dReal(deltax);
     dReal fwd = (mode==4) ? (0.01f * dReal(deltay)) : 0.0f;
-    dReal s = (dReal) sin (view_hpr[0]*M_PI/180.0f);
-    dReal c = (dReal) cos (view_hpr[0]*M_PI/180.0f);
+    auto s = (dReal) sin (view_hpr[0]*M_PI/180.0f);
+    auto c = (dReal) cos (view_hpr[0]*M_PI/180.0f);
 
     if (mode==1) {
         view_hpr[0] += dReal (deltax) * 0.5f;
@@ -621,14 +619,14 @@ void CGraphics::drawSSLGround(dReal SSL_FIELD_RAD,dReal SSL_FIELD_LENGTH,dReal S
 {
     if (graphicDisabled) return;
     dReal angle;
-    GLfloat fw   = static_cast<GLfloat>(SSL_FIELD_LENGTH / 2.0);
-    GLfloat fh   = static_cast<GLfloat>(SSL_FIELD_WIDTH / 2.0);
-    GLfloat lw   = static_cast<GLfloat>(SSL_FIELD_LINE_WIDTH);
-    GLfloat rad  = static_cast<GLfloat>(SSL_FIELD_RAD);
-    GLfloat penx = static_cast<GLfloat>(SSL_FIELD_PENALTY_POINT);
-    GLfloat pdep = static_cast<GLfloat>(SSL_FIELD_PENALTY_DEPTH);
-    GLfloat pwid = static_cast<GLfloat>(SSL_FIELD_PENALTY_WIDTH);
-    GLfloat epsilon = static_cast<GLfloat>(_epsilon);
+    auto fw   = static_cast<GLfloat>(SSL_FIELD_LENGTH / 2.0);
+    auto fh   = static_cast<GLfloat>(SSL_FIELD_WIDTH / 2.0);
+    auto lw   = static_cast<GLfloat>(SSL_FIELD_LINE_WIDTH);
+    auto rad  = static_cast<GLfloat>(SSL_FIELD_RAD);
+    auto penx = static_cast<GLfloat>(SSL_FIELD_PENALTY_POINT);
+    auto pdep = static_cast<GLfloat>(SSL_FIELD_PENALTY_DEPTH);
+    auto pwid = static_cast<GLfloat>(SSL_FIELD_PENALTY_WIDTH);
+    auto epsilon = static_cast<GLfloat>(_epsilon);
     glEnable(GL_DEPTH_TEST);
     glPushMatrix();
     glScaled(1.0, 1.0, 1);
@@ -675,8 +673,8 @@ void CGraphics::drawSSLGround(dReal SSL_FIELD_RAD,dReal SSL_FIELD_LENGTH,dReal S
 
     //Middle circle
 
-    const float anglestep = M_PI/20.f;
-    float cos1, cos2, sin1, sin2;
+    const double anglestep = M_PI/20.f;
+    double cos1, cos2, sin1, sin2;
 
     cos1 = cos(-anglestep);
     sin1 = sin(-anglestep);
@@ -874,9 +872,9 @@ void CGraphics::_drawPatch (dReal p1[3], dReal p2[3], dReal p3[3], int level)
             q2[i] = 0.5f*(p2[i]+p3[i]);
             q3[i] = 0.5f*(p3[i]+p1[i]);
         }
-        dReal length1 = (dReal)(1.0/sqrt(q1[0]*q1[0]+q1[1]*q1[1]+q1[2]*q1[2]));
-        dReal length2 = (dReal)(1.0/sqrt(q2[0]*q2[0]+q2[1]*q2[1]+q2[2]*q2[2]));
-        dReal length3 = (dReal)(1.0/sqrt(q3[0]*q3[0]+q3[1]*q3[1]+q3[2]*q3[2]));
+        auto length1 = (dReal)(1.0/sqrt(q1[0]*q1[0]+q1[1]*q1[1]+q1[2]*q1[2]));
+        auto length2 = (dReal)(1.0/sqrt(q2[0]*q2[0]+q2[1]*q2[1]+q2[2]*q2[2]));
+        auto length3 = (dReal)(1.0/sqrt(q3[0]*q3[0]+q3[1]*q3[1]+q3[2]*q3[2]));
         for (i=0; i<3; i++) {
             q1[i] *= length1;
             q2[i] *= length2;
@@ -937,9 +935,9 @@ void CGraphics::_drawSphere()
         listnum = glGenLists (1);
         glNewList (listnum,GL_COMPILE);
         glBegin (GL_TRIANGLES);
-        for (int i=0; i<20; i++) {
-            _drawPatch (&idata[iindex[i][2]][0],&idata[iindex[i][1]][0],
-                        &idata[iindex[i][0]][0],sphere_quality);
+        for (auto & i : iindex) {
+            _drawPatch (&idata[i[2]][0],&idata[i[1]][0],
+                        &idata[i[0]][0],sphere_quality);
         }
         glEnd();
         glEndList();

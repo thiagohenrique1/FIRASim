@@ -30,10 +30,10 @@ private:
 	bool m_robot;
 public:
     PBox(dReal x,dReal y,dReal z,dReal w,dReal h,dReal l,dReal mass,dReal r,dReal g,dReal b,int tex_id=-1,bool robot=false);
-    virtual ~PBox();
-    virtual void setMass(dReal mass);
-    virtual void init();
-    virtual void draw();
+    ~PBox() override;
+    void setMass(dReal mass) override;
+    void init() override;
+    void draw() override;
 };
 
 #endif // PBOX_H

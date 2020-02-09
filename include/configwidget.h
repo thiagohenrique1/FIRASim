@@ -27,8 +27,8 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include <QMainWindow>
 #include <QSettings>
 
-#include <stdint.h>
-#include <stdio.h>
+#include <cstdint>
+#include <cstdio>
 #include <memory>
 
 #include <vartypes/VarTreeModel.h>
@@ -80,7 +80,7 @@ using namespace VarTypes;
 
 #define DEF_ENUM(type,name)  \
             std::shared_ptr<VarTypes::VarStringEnum> v_##name; \
-            type name() {if(v_##name!=NULL) return v_##name->getString();return * (new type);}
+            type name() {if(v_##name!=NULL) return v_##name->getString();return * (new (type));}
 
 #define DEF_TREE(name)  \
             std::shared_ptr<VarTypes::VarList> name;
@@ -122,12 +122,12 @@ protected:
 public:
   VarListPtr geo_vars;
   ConfigWidget();
-  virtual ~ConfigWidget();
+  ~ConfigWidget() override;
 
   QSettings* robot_settings;
-  RobotSettings robotSettings;
-  RobotSettings blueSettings;
-  RobotSettings yellowSettings;
+  RobotSettings robotSettings{};
+  RobotSettings blueSettings{};
+  RobotSettings yellowSettings{};
 
   /*    Geometry/Game Vartypes   */
   DEF_ENUM(std::string, Division)
@@ -182,7 +182,7 @@ public:
   DEF_VALUE(std::string, String, plotter_addr)
   DEF_VALUE(int, Int, plotter_port)
   DEF_VALUE(bool, Bool, plotter)  
-  void loadRobotSettings(QString team);
+  void loadRobotSettings(const const QString&& team);
 public slots:  
   void loadRobotsSettings();
 };
@@ -195,7 +195,7 @@ class ConfigDockWidget : public QDockWidget
     ConfigWidget* conf;
     ConfigDockWidget(QWidget* _parent,ConfigWidget* _conf);
   protected:
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event) override;
   signals:
     void closeSignal(bool);
 };

@@ -28,7 +28,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 RobotWidget::RobotWidget(QWidget* parent, ConfigWidget* cfg)
     : QDockWidget("Current Robot",parent)
 {
-    QGridLayout *layout = new QGridLayout;
+    auto *layout = new QGridLayout;
     robotpic = new QLabel;
     teamCombo = new QComboBox(this);
     teamCombo->addItem("Blue");
@@ -58,7 +58,7 @@ RobotWidget::RobotWidget(QWidget* parent, ConfigWidget* cfg)
     layout->addWidget(locateBtn,3,2);
     layout->addWidget(onOffBtn,4,1);
     layout->addWidget(setPoseBtn,4,2);
-    QWidget *widget = new QWidget(this);
+    auto *widget = new QWidget(this);
     widget->setLayout(layout);
     widget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     setWidget(widget);

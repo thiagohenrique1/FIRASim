@@ -40,5 +40,5 @@ int main(int argc, char *argv[])
         // Run normally
         w.show();
     }
-    return a.exec();
+    return QApplication::exec();
 }

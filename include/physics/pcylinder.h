@@ -25,15 +25,15 @@ class PCylinder : public PObject
 {
 private:
     dReal m_radius,m_length;
-    GLuint m_gllistid;
+    GLuint m_gllistid{};
     int m_texid;
     bool m_robot;
 public:
     PCylinder(dReal x,dReal y,dReal z,dReal radius,dReal length,dReal mass,dReal red,dReal green,dReal blue,int tex_id=-1,bool robot=false);
-    virtual ~PCylinder();
-    virtual void setMass(dReal mass);
-    virtual void init();
-    virtual void draw();
+    ~PCylinder() override;
+    void setMass(dReal mass) override;
+    void init() override;
+    void draw() override;
 };
 
 #endif // PCYLINDER_H

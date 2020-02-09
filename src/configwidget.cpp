@@ -18,11 +18,13 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 
 #include "configwidget.h"
 
+#include <memory>
+
 #define ADD_ENUM(type,name,Defaultvalue,namestring) \
     v_##name = std::shared_ptr<Var##type>(new Var##type(namestring,Defaultvalue));
 #define ADD_VALUE(parent,type,name,defaultvalue,namestring) \
     v_##name = std::shared_ptr<Var##type>(new Var##type(namestring,defaultvalue)); \
-    parent->addChild(v_##name);
+    (parent)->addChild(v_##name);
 
 #define END_ENUM(parents, name) \
     parents->addChild(v_##name);
@@ -34,7 +36,7 @@ ConfigWidget::ConfigWidget()
 {      
   tmodel=new VarTreeModel();
   this->setModel(tmodel);  
-  geo_vars = VarListPtr(new VarList("Geometry"));
+  geo_vars = std::make_shared<VarList>("Geometry");
   world.push_back(geo_vars);  
   robot_settings = new QSettings;
 
@@ -141,27 +143,25 @@ ConfigWidget::ConfigWidget()
     std::string yellowteam = v_YellowTeam->getString();
     geo_vars->removeChild(v_YellowTeam);
 
-    ADD_ENUM(StringEnum,BlueTeam,blueteam.c_str(),"Blue Team");
-    ADD_ENUM(StringEnum,YellowTeam,yellowteam.c_str(),"Yellow Team");
+    ADD_ENUM(StringEnum,BlueTeam,blueteam,"Blue Team");
+    ADD_ENUM(StringEnum,YellowTeam,yellowteam,"Yellow Team");
 
-    dir.setCurrent(qApp->applicationDirPath()+"/../config/");
+    QDir::setCurrent(qApp->applicationDirPath()+"/../config/");
     dir.setNameFilters(QStringList() << "*.ini");
     dir.setSorting(QDir::Size | QDir::Reversed);
     QFileInfoList list = dir.entryInfoList();
-    for (int i = 0; i < list.size(); ++i) {
-        QFileInfo fileInfo = list.at(i);
+    for (const auto& fileInfo : list) {
         QStringList s = fileInfo.fileName().split(".");
         QString str;
         if (s.count() > 0) str = s[0];
         ADD_TO_ENUM(BlueTeam,str.toStdString())
         ADD_TO_ENUM(YellowTeam,str.toStdString())
     }
-    dir.setCurrent(qApp->applicationDirPath()+"/../share/grsim/config/");
+    QDir::setCurrent(qApp->applicationDirPath()+"/../share/grsim/config/");
     dir.setNameFilters(QStringList() << "*.ini");
     dir.setSorting(QDir::Size | QDir::Reversed);
     list = dir.entryInfoList();
-    for (int i = 0; i < list.size(); ++i) {
-        QFileInfo fileInfo = list.at(i);
+    for (const auto& fileInfo : list) {
         QStringList s = fileInfo.fileName().split(".");
         QString str;
         if (s.count() > 0) str = s[0];
@@ -213,7 +213,7 @@ void ConfigWidget::loadRobotsSettings()
     blueSettings = robotSettings;
 }
 
-void ConfigWidget::loadRobotSettings(QString team)
+void ConfigWidget::loadRobotSettings(const const QString&& team)
 {
     QString ss = qApp->applicationDirPath()+QString("/../config/")+QString("%1.ini").arg(team);
     robot_settings = new QSettings(ss, QSettings::IniFormat);

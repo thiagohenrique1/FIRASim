@@ -35,11 +35,11 @@ class GLWidget : public QGLWidget {
     Q_OBJECT
 public:
     GLWidget(QWidget *parent,ConfigWidget* _cfg);
-    ~GLWidget();
+    ~GLWidget() override;
     dReal getFPS();
     ConfigWidget* cfg;   
     SSLWorld* ssl;
-    RobotsFomation* forms[6];
+    RobotsFormation* forms[6]{};
     QMenu* robpopup,*ballpopup,*mainpopup;
     QMenu *blueRobotsMenu,*yellowRobotsMenu;
     QAction* moveRobotAct;
@@ -54,7 +54,7 @@ public:
     QAction* changeCamModeAct;
     QMenu *cameraMenu;
     int Current_robot,Current_team,cammode;
-    int lockedIndex;
+    int lockedIndex{};
     bool ctrl,alt,kickingball,altTrigger;
     bool chiping;
     double kickpower, chipAngle;
@@ -86,23 +86,23 @@ signals:
     void toggleFullScreen(bool);
     void robotTurnedOnOff(int,bool);
 protected:
-    void paintGL ();
-    void initializeGL ();        
+    void paintGL () override;
+    void initializeGL () override;
 
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);    
-    void wheelEvent(QWheelEvent *event);
-    void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent* event);
-    void closeEvent(QCloseEvent *event);    
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
+    void closeEvent(QCloseEvent *event) override;
 private:
     int state;
-    int moving_robot_id,clicked_robot;
+    int moving_robot_id{},clicked_robot{};
     int frames;
     bool first_time;
     QTime time,rendertimer;
-    dReal m_fps;
+    dReal m_fps{};
     QPoint lastPos;
 friend class GLWidgetGraphicsView;
 };
@@ -114,12 +114,12 @@ class GLWidgetGraphicsView : public QGraphicsView
     public:
         GLWidgetGraphicsView(QGraphicsScene *scene,GLWidget* _glwidget);
     protected:
-        void mousePressEvent(QMouseEvent *event);
-        void mouseMoveEvent(QMouseEvent *event);
-        void mouseReleaseEvent(QMouseEvent *event);
-        void wheelEvent(QWheelEvent *event);
-        void keyPressEvent(QKeyEvent *event);
-        void closeEvent(QCloseEvent *event);
+        void mousePressEvent(QMouseEvent *event) override;
+        void mouseMoveEvent(QMouseEvent *event) override;
+        void mouseReleaseEvent(QMouseEvent *event) override;
+        void wheelEvent(QWheelEvent *event) override;
+        void keyPressEvent(QKeyEvent *event) override;
+        void closeEvent(QCloseEvent *event) override;
 };
 
 #endif // WIDGET_H

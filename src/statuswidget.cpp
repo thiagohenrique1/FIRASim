@@ -36,7 +36,7 @@ CStatusWidget::CStatusWidget(CStatusPrinter* _statusPrinter)
 
 }
 
-void CStatusWidget::write(QString str, QColor color)
+void CStatusWidget::write(const QString& str, const QColor& color)
 {
     if( statusText->textCursor().blockNumber() > 2000 )
         statusText->clear();

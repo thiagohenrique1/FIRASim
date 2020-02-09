@@ -27,16 +27,17 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include <QTextDocument>
 #include <QTime>
 #include <QQueue>
+#include <utility>
 #include <QColor>
 
 
 class CStatusText
 {
     public:
-    CStatusText(QString _text = "", QColor _color = QColor("black"), int _size = 12)
+    explicit CStatusText(QString _text = "", QColor _color = QColor("black"), int _size = 12)
     {
-        text= _text;
-        color = _color;
+        text= std::move(_text);
+        color = std::move(_color);
         size = _size;
     }
 
@@ -48,7 +49,7 @@ class CStatusText
 class CStatusPrinter
 {
     public:
-    CStatusPrinter() {}
+    CStatusPrinter() = default;
 
     QQueue<CStatusText> textBuffer;
 };
@@ -58,13 +59,13 @@ class CStatusWidget : public QDockWidget
 {
     Q_OBJECT
 public:
-    CStatusWidget(CStatusPrinter* _statusPrinter);
+    explicit CStatusWidget(CStatusPrinter* _statusPrinter);
     QTextEdit *statusText;
     QLabel *titleLbl;
     QTextDocument content;
 
 public slots:
-    void write(QString str, QColor color = QColor("black"));
+    void write(const QString& str, const QColor& color = QColor("black"));
     void update();
 
 private:

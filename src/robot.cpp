@@ -41,14 +41,14 @@ CRobot::Wheel::Wheel(CRobot* robot,int _id,dReal ang,dReal ang2,int wheeltexid)
 
     rob->w->addObject(cyl);
 
-    joint = dJointCreateHinge (rob->w->world,0);
+    joint = dJointCreateHinge (rob->w->world,nullptr);
 
     dJointAttach (joint,rob->chassis->body,cyl->body);
     const dReal *a = dBodyGetPosition (cyl->body);
     dJointSetHingeAxis (joint,cos(ang),sin(ang),0);
     dJointSetHingeAnchor (joint,a[0],a[1],a[2]);
 
-    motor = dJointCreateAMotor(rob->w->world,0);
+    motor = dJointCreateAMotor(rob->w->world,nullptr);
     dJointAttach(motor,rob->chassis->body,cyl->body);
     dJointSetAMotorNumAxes(motor,1);
     dJointSetAMotorAxis(motor,0,1,cos(ang),sin(ang),0);

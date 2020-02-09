@@ -42,7 +42,7 @@ PWorld::PWorld(dReal dt,dReal gravity,CGraphics* graphics, int _robot_count)
     //dInitODE2(0);
     dInitODE();
     world = dWorldCreate();
-    space = dHashSpaceCreate (0);
+    space = dHashSpaceCreate (nullptr);
     contactgroup = dJointGroupCreate (0);
     dWorldSetGravity (world,0,0,-gravity);
     objects_count = 0;

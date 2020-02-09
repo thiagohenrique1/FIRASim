@@ -41,7 +41,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include "config.h"
 #define WALL_COUNT 16
 
-class RobotsFomation;
+class RobotsFormation;
 class SendingPacket {
     public:
     SendingPacket(fira_message::sim_to_ref::Environment* _packet,int _t);
@@ -54,7 +54,7 @@ class SSLWorld : public QObject
     Q_OBJECT
 private:
     QGLWidget* m_parent;
-    int framenum;
+    int frame_num;
     dReal last_dt;
     QList<SendingPacket*> sendQueue;
     char *in_buffer;
@@ -63,7 +63,7 @@ private:
 public:    
     dReal customDT;
     bool isGLEnabled;
-    SSLWorld(QGLWidget* parent,ConfigWidget* _cfg,RobotsFomation *form);
+    SSLWorld(QGLWidget* parent, ConfigWidget* _cfg, RobotsFormation *form);
     ~SSLWorld() override;
     void glinit();
     void step(dReal dt=-1);
@@ -93,12 +93,12 @@ signals:
     void fpsChanged(int newFPS);
 };
 
-class RobotsFomation {
+class RobotsFormation {
     public:
-        dReal x[MAX_ROBOT_COUNT];
-        dReal y[MAX_ROBOT_COUNT];
-        RobotsFomation(int type, ConfigWidget* _cfg);
-        void setAll(dReal *xx,dReal *yy);
+        dReal x[MAX_ROBOT_COUNT]{};
+        dReal y[MAX_ROBOT_COUNT]{};
+        RobotsFormation(int type, ConfigWidget* _cfg);
+        void setAll(const dReal *xx,const dReal *yy);
         void loadFromFile(const QString& filename);
         void resetRobots(CRobot** r,int team);
     private:

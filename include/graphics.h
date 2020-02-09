@@ -30,10 +30,10 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 class CGraphics
 {
 private:
-    dReal view_xyz[3],view_hpr[3];
+    dReal view_xyz[3]{},view_hpr[3]{};
     QVector<GLuint> tex_ids;
-    dReal frustum_right,frustum_bottom,frustum_vnear,m_renderDepth;
-    int _width,_height;
+    dReal frustum_right{},frustum_bottom{},frustum_vnear{},m_renderDepth;
+    int _width{},_height{};
     QGLWidget* owner;
     int sphere_quality;
     void _drawBox (const dReal sides[3]);
@@ -47,14 +47,14 @@ private:
     void setCamera (dReal x, dReal y, dReal z, dReal h, dReal p, dReal r);
     bool graphicDisabled;
 public:
-    CGraphics(QGLWidget* _owner);
+    explicit CGraphics(QGLWidget* _owner);
     ~CGraphics();
     void disableGraphics();
     void enableGraphics();
     bool isGraphicsEnabled();
     int loadTexture(QImage* img);
     int loadTextureSkyBox(QImage* img);
-    void setViewpoint (dReal xyz[3], dReal hpr[3]);
+    void setViewpoint (const dReal xyz[3], const dReal hpr[3]);
     void getViewpoint (dReal* xyz, dReal* hpr);
     void getFrustum(dReal& right,dReal& bottom,dReal& vnear);
     int getWidth();

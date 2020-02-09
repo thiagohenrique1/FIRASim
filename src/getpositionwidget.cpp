@@ -23,7 +23,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 
 GetPositionWidget::GetPositionWidget()
 {
-    QGridLayout *layout = new QGridLayout(this);
+    auto *layout = new QGridLayout(this);
     okBtn = new QPushButton("&Ok",this);
     cancelBtn = new QPushButton("&Cancel",this);
     x = new QLineEdit(this);

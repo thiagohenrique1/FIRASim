@@ -35,11 +35,11 @@ GLWidget::GLWidget(QWidget *parent, ConfigWidget* _cfg)
     first_time = true;
     cfg = _cfg;
 
-    forms[1] = new RobotsFomation(-1, cfg);  //outside yellow
-    forms[2] = new RobotsFomation(1, cfg);  //inside type 1
-    forms[3] = new RobotsFomation(2, cfg);  //inside type 2
-    forms[4] = new RobotsFomation(3, cfg);  //inside type 1
-    //forms[5] = new RobotsFomation(4);  //inside type 2
+    forms[1] = new RobotsFormation(-1, cfg);  //outside yellow
+    forms[2] = new RobotsFormation(1, cfg);  //inside type 1
+    forms[3] = new RobotsFormation(2, cfg);  //inside type 2
+    forms[4] = new RobotsFormation(3, cfg);  //inside type 1
+    //forms[5] = new RobotsFormation(4);  //inside type 2
 
     ssl = new SSLWorld(this,cfg,forms[2]);
     Current_robot = 0;
@@ -121,8 +121,7 @@ GLWidget::GLWidget(QWidget *parent, ConfigWidget* _cfg)
 }
 
 GLWidget::~GLWidget()
-{
-}
+= default;
 
 void GLWidget::moveRobot()
 {

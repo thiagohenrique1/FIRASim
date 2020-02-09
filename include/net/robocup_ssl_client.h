@@ -37,7 +37,7 @@ class QNetworkInterface;
 class RoboCupSSLClient
 {
 public:
-    RoboCupSSLClient(const quint16 & port=10002,
+    explicit RoboCupSSLClient(const quint16 & port=10002,
                      const string & net_address="224.5.23.2",
                      const string  & net_interface="");
 

@@ -53,7 +53,7 @@ void MainWindow::customFPS(int fps)
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    QDir dir = qApp->applicationDirPath();
+    QDir dir = QApplication::applicationDirPath();
     dir.cdUp();
     current_dir = dir.path();
     /* Status Logger */
@@ -74,10 +74,10 @@ MainWindow::MainWindow(QWidget *parent)
     glwidget->setWindowTitle(tr("Simulator"));
     glwidget->resize(512,512);    
 
-    visionServer = NULL;
-    commandSocket = NULL;
-    blueStatusSocket = NULL;
-    yellowStatusSocket = NULL;
+    visionServer = nullptr;
+    commandSocket = nullptr;
+    blueStatusSocket = nullptr;
+    yellowStatusSocket = nullptr;
     reconnectVisionSocket();
     reconnectCommandSocket();
     reconnectBlueStatusSocket();
@@ -85,10 +85,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     glwidget->ssl->visionServer = visionServer;
     glwidget->ssl->commandSocket = commandSocket;
-    glwidget->ssl->blueStatusSocket = blueStatusSocket;
-    glwidget->ssl->yellowStatusSocket = yellowStatusSocket;
-
-
 
     robotwidget = new RobotWidget(this, configwidget);
     /* Status Bar */
@@ -109,19 +105,19 @@ MainWindow::MainWindow(QWidget *parent)
     statusBar()->addWidget(noiselabel);
     /* Menus */
 
-    QMenu *fileMenu = new QMenu("&File");
+    auto *fileMenu = new QMenu("&File");
     menuBar()->addMenu(fileMenu);    
-    QAction *takeSnapshotAct = new QAction("&Save snapshot to file", fileMenu);
+    auto *takeSnapshotAct = new QAction("&Save snapshot to file", fileMenu);
     takeSnapshotAct->setShortcut(QKeySequence("F3"));
-    QAction *takeSnapshotToClipboardAct = new QAction("&Copy snapshot to clipboard", fileMenu);
+    auto *takeSnapshotToClipboardAct = new QAction("&Copy snapshot to clipboard", fileMenu);
     takeSnapshotToClipboardAct->setShortcut(QKeySequence("F4"));    
-    QAction *exit = new QAction("E&xit", fileMenu);
+    auto *exit = new QAction("E&xit", fileMenu);
     exit->setShortcut(QKeySequence("Ctrl+X"));
     fileMenu->addAction(takeSnapshotAct);
     fileMenu->addAction(takeSnapshotToClipboardAct);
     fileMenu->addAction(exit);
 
-    QMenu *viewMenu = new QMenu("&View");
+    auto *viewMenu = new QMenu("&View");
     menuBar()->addMenu(viewMenu);
     showsimulator = new QAction("&Simulator", viewMenu);
     showsimulator->setCheckable(true);
@@ -132,15 +128,15 @@ MainWindow::MainWindow(QWidget *parent)
     showconfig->setChecked(true);
     viewMenu->addAction(showconfig);
 
-    QMenu *simulatorMenu = new QMenu("&Simulator");
+    auto *simulatorMenu = new QMenu("&Simulator");
     menuBar()->addMenu(simulatorMenu);
-    QMenu *robotMenu = new QMenu("&Robot");
-    QMenu *ballMenu = new QMenu("&Ball");
+    auto *robotMenu = new QMenu("&Robot");
+    auto *ballMenu = new QMenu("&Ball");
     simulatorMenu->addMenu(robotMenu);
     simulatorMenu->addMenu(ballMenu);
 
-    QMenu *helpMenu = new QMenu("&Help");
-    QAction* aboutMenu = new QAction("&About", helpMenu);
+    auto *helpMenu = new QMenu("&Help");
+    auto* aboutMenu = new QAction("&About", helpMenu);
     menuBar()->addMenu(helpMenu);
     helpMenu->addAction(aboutMenu);
 
@@ -268,8 +264,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow()
-{
-}
+= default;
 
 void MainWindow::showHideConfig(bool v)
 {
@@ -405,9 +400,6 @@ void MainWindow::restartSimulator()
     glwidget->ssl->glinit();
     glwidget->ssl->visionServer = visionServer;
     glwidget->ssl->commandSocket = commandSocket;
-    glwidget->ssl->blueStatusSocket = blueStatusSocket;
-    glwidget->ssl->yellowStatusSocket = yellowStatusSocket;
-
 
 }
 
@@ -488,33 +480,9 @@ void MainWindow::showAbout()
     QMessageBox::about(this, title, text);
 }
 
-
-
-void MainWindow::reconnectBlueStatusSocket()
-{
-    if (blueStatusSocket!=NULL)
-    {
-        delete blueStatusSocket;
-    }
-    blueStatusSocket = new QUdpSocket(this);
-    // if (blueStatusSocket->bind(QHostAddress::Any,configwidget->BlueStatusSendPort()))
-    //     logStatus(QString("Status send port binded for Blue Team on: %1").arg(configwidget->BlueStatusSendPort()),QColor("green"));
-}
-
-void MainWindow::reconnectYellowStatusSocket()
-{
-    if (yellowStatusSocket!=NULL)
-    {
-        delete yellowStatusSocket;
-    }
-    yellowStatusSocket = new QUdpSocket(this);
-    // if (yellowStatusSocket->bind(QHostAddress::Any,configwidget->YellowStatusSendPort()))
-    //     logStatus(QString("Status send port binded for Yellow Team on: %1").arg(configwidget->YellowStatusSendPort()),QColor("green"));
-}
-
 void MainWindow::reconnectCommandSocket()
 {
-    if (commandSocket!=NULL)
+    if (commandSocket!=nullptr)
     {
         QObject::disconnect(commandSocket,SIGNAL(readyRead()),this,SLOT(recvActions()));
         delete commandSocket;
@@ -527,7 +495,7 @@ void MainWindow::reconnectCommandSocket()
 
 void MainWindow::reconnectVisionSocket()
 {
-    if (visionServer == NULL) {
+    if (visionServer == nullptr) {
         visionServer = new RoboCupSSLServer(this);
     }
     visionServer->change_address(configwidget->VisionMulticastAddr());
