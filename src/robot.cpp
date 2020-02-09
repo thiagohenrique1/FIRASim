@@ -298,7 +298,7 @@ void CRobot::setDir(dReal ang)
 }
 
 void CRobot::setSpeed(int i,dReal s) {
-    if (!((i>=4) || (i<0))) wheels[i]->speed = s;
+    if (!((i>=2) || (i<0))) wheels[i]->speed = s;
 }
 
 void CRobot::setSpeed(dReal vx, dReal vy, dReal vw) {

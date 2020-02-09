@@ -544,7 +544,7 @@ void SSLWorld::recvActions()
                     int id = robotIndex(robot_cmd.id(), robot_cmd.yellowteam());
                     if ((id < 0) || (id >= cfg->Robots_Count()*2)) continue;
                         robots[id]->setSpeed(0, robot_cmd.wheel_left());
-                        robots[id]->setSpeed(1, robot_cmd.wheel_right());
+                        robots[id]->setSpeed(1, -1 * robot_cmd.wheel_right());
                 }
 
             }
