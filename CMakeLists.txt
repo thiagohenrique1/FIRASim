@@ -18,7 +18,7 @@ standard_paths(${PROJECT_SOURCE_DIR} bin lib)
 set(app ${CMAKE_PROJECT_NAME})
 # create the target before the sources list is known so that we can call
 # add_dependencies(<target> external_proj)
-add_executable(${app} "")
+add_executable(${app} "" src/main.cpp)
 
 # definitions for knowing the OS from the code
 if(MSVC)
@@ -256,5 +256,3 @@ else()
     set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME_LOWER}_${CPACK_PACKAGE_VERSION}_${ARCH}")
 endif()
 include(CPack)
-
-

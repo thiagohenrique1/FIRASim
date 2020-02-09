@@ -585,7 +585,6 @@ dReal normalizeAngle(dReal a)
     return a;
 }
 
-#define CONVUNIT(x) ((int)(1000*(x)))
 Environment* SSLWorld::generatePacket()
 {
     auto* env = new Environment;

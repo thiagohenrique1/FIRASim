@@ -57,7 +57,6 @@ private:
     int framenum;
     dReal last_dt;
     QList<SendingPacket*> sendQueue;
-    char packet[200]{};
     char *in_buffer;
     bool lastInfraredState[TEAM_COUNT][MAX_ROBOT_COUNT]{};
     KickStatus lastKickState[TEAM_COUNT][MAX_ROBOT_COUNT]{};
