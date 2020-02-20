@@ -327,7 +327,7 @@ SSLWorld::SSLWorld(QGLWidget* parent, ConfigWidget* _cfg, RobotsFormation *form)
             }
         }
     }
-    timer = new QTime();
+    timer = new QElapsedTimer();
     timer->start();
     in_buffer = new char [65536];
 

@@ -86,7 +86,7 @@ public:
     QUdpSocket *commandSocket{};
     bool updatedCursor;
     CRobot* robots[MAX_ROBOT_COUNT*2]{};
-    QTime *timer;
+    QElapsedTimer *timer;
 public slots:
     void recvActions();
 signals:

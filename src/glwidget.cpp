@@ -39,9 +39,11 @@ GLWidget::GLWidget(QWidget *parent, ConfigWidget* _cfg)
     forms[2] = new RobotsFormation(1, cfg);  //inside type 1
     forms[3] = new RobotsFormation(2, cfg);  //inside type 2
     forms[4] = new RobotsFormation(3, cfg);  //inside type 1
+    forms[5] = new RobotsFormation(-2, cfg);
+    forms[5]->loadFromFile(qApp->applicationDirPath()+ "/../formation/normal.formation");
     //forms[5] = new RobotsFormation(4);  //inside type 2
 
-    ssl = new SSLWorld(this,cfg,forms[2]);
+    ssl = new SSLWorld(this,cfg,forms[5]);
     Current_robot = 0;
     Current_team = 0;
     cammode = 0;
