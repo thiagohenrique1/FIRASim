@@ -596,9 +596,9 @@ Environment* SSLWorld::generatePacket()
     if (!cfg->vanishing() || (rand0_1() > cfg->ball_vanishing()))
     {
         auto* vball = env->mutable_frame()->mutable_ball();
-        vball->set_x(randn_notrig(x*1000.0,dev_x));
-        vball->set_y(randn_notrig(y*1000.0,dev_y));
-        vball->set_z(z*1000.0);
+        vball->set_x(randn_notrig(x,dev_x));
+        vball->set_y(randn_notrig(y,dev_y));
+        vball->set_z(z);
     }
     for(uint32_t i = 0; i < cfg->Robots_Count()*2; i++) {
         if (!cfg->vanishing() || (rand0_1() > cfg->blue_team_vanishing())){
@@ -613,8 +613,8 @@ Environment* SSLWorld::generatePacket()
             if (i < cfg->Robots_Count()) rob = env->mutable_frame()->add_robots_blue();
             else rob = env->mutable_frame()->add_robots_yellow();
             rob->set_robot_id(i);
-            rob->set_x(randn_notrig(x*1000.0,dev_x));
-            rob->set_y(randn_notrig(y*1000.0,dev_y));
+            rob->set_x(randn_notrig(x,dev_x));
+            rob->set_y(randn_notrig(y,dev_y));
             rob->set_orientation(normalizeAngle(randn_notrig(dir,dev_a))*M_PI/180.0);
         }
     }
@@ -642,18 +642,14 @@ void SSLWorld::sendVisionBuffer()
     }
 }
 
-void RobotsFormation::setAll(const dReal* xx, const dReal *yy)
-{
-    for (int i=0;i<cfg->Robots_Count();i++)
-    {
+void RobotsFormation::setAll(const dReal* xx, const dReal *yy) {
+    for (int i=0;i<cfg->Robots_Count();i++) {
         x[i] = xx[i];
         y[i] = yy[i];
     }
 }
 
-RobotsFormation::RobotsFormation(int type, ConfigWidget* _cfg):
-cfg(_cfg)
-{
+RobotsFormation::RobotsFormation(int type, ConfigWidget* _cfg): cfg(_cfg) {
     if (type==0)
     {
         dReal teamPosX[MAX_ROBOT_COUNT] = {2.2, 1.0, 1.0, 1.0, 0.33, 1.22,
