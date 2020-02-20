@@ -614,7 +614,7 @@ Environment* SSLWorld::generatePacket()
             else rob = env->mutable_frame()->add_robots_yellow();
             rob->set_robot_id(i - cfg->Robots_Count());
             if (i >= cfg->Robots_Count()) rob->set_robot_id(i - cfg->Robots_Count());
-            else rob->set_robot_id(i - cfg->Robots_Count());
+            else rob->set_robot_id(i);
             rob->set_x(randn_notrig(x,dev_x));
             rob->set_y(randn_notrig(y,dev_y));
             rob->set_orientation(normalizeAngle(randn_notrig(dir,dev_a))*M_PI/180.0);
