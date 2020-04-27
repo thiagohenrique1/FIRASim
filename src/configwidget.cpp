@@ -54,21 +54,21 @@ ConfigWidget::ConfigWidget()
   fields_vars->addChild(div_a_vars);
   fields_vars->addChild(div_b_vars);
 
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Line_Width,0.010,"Line Thickness")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Length,12.000,"Length")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Width,9.000,"Width")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Rad,0.500,"Radius")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Free_Kick,0.700,"Free Kick Distance From Defense Area")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Penalty_Width,2.40,"Penalty width")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Penalty_Depth,1.20,"Penalty depth")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Penalty_Point,1.20,"Penalty point")
+  ADD_VALUE(div_a_vars, Double, DivA_Field_Line_Width,0.03,"Line Thickness")
+  ADD_VALUE(div_a_vars, Double, DivA_Field_Length,1.50,"Length")
+  ADD_VALUE(div_a_vars, Double, DivA_Field_Width,1.300,"Width")
+  ADD_VALUE(div_a_vars, Double, DivA_Field_Rad,0.200,"Radius")
+  ADD_VALUE(div_a_vars, Double, DivA_Field_Free_Kick,0.200,"Free Kick Distance From Defense Area")
+  ADD_VALUE(div_a_vars, Double, DivA_Field_Penalty_Width,0.70,"Penalty width")
+  ADD_VALUE(div_a_vars, Double, DivA_Field_Penalty_Depth,0.15,"Penalty depth")
+  ADD_VALUE(div_a_vars, Double, DivA_Field_Penalty_Point,0.35,"Penalty point")
   ADD_VALUE(div_a_vars, Double, DivA_Field_Margin,0.3,"Margin")
   ADD_VALUE(div_a_vars, Double, DivA_Field_Referee_Margin,0.4,"Referee margin")
-  ADD_VALUE(div_a_vars, Double, DivA_Wall_Thickness,0.050,"Wall thickness")
-  ADD_VALUE(div_a_vars, Double, DivA_Goal_Thickness,0.020,"Goal thickness")
-  ADD_VALUE(div_a_vars, Double, DivA_Goal_Depth,0.200,"Goal depth")
-  ADD_VALUE(div_a_vars, Double, DivA_Goal_Width,1.200,"Goal width")
-  ADD_VALUE(div_a_vars, Double, DivA_Goal_Height,0.160,"Goal height")
+  ADD_VALUE(div_a_vars, Double, DivA_Wall_Thickness,0.025,"Wall thickness")
+  ADD_VALUE(div_a_vars, Double, DivA_Goal_Thickness,0.025,"Goal thickness")
+  ADD_VALUE(div_a_vars, Double, DivA_Goal_Depth,0.10,"Goal depth")
+  ADD_VALUE(div_a_vars, Double, DivA_Goal_Width,0.40,"Goal width")
+  ADD_VALUE(div_a_vars, Double, DivA_Goal_Height,0.05,"Goal height")
 
   ADD_VALUE(div_b_vars, Double, DivB_Field_Line_Width,0.010,"Line Thickness")
   ADD_VALUE(div_b_vars, Double, DivB_Field_Length,2.200,"Length")
@@ -114,7 +114,7 @@ ConfigWidget::ConfigWidget()
         ADD_VALUE(ballp_vars,Double,BallAngularDamp,0.004,"Ball angular damping")
   VarListPtr comm_vars(new VarList("Communication"));
   world.push_back(comm_vars);
-    ADD_VALUE(comm_vars,String,VisionMulticastAddr,"224.5.23.2","Vision multicast address")  //SSL Vision: "224.5.23.2"
+    ADD_VALUE(comm_vars,String,VisionMulticastAddr,"127.0.0.1","Vision multicast address")  //LocalHost
     ADD_VALUE(comm_vars,Int,VisionMulticastPort,10020,"Vision multicast port")
     ADD_VALUE(comm_vars,Int,CommandListenPort,20011,"Command listen port")
     ADD_VALUE(comm_vars,Int,BlueStatusSendPort,30011,"Blue Team status send port")
