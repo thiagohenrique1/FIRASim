@@ -620,6 +620,12 @@ Environment* SSLWorld::generatePacket()
             rob->set_orientation(normalizeAngle(randn_notrig(dir,dev_a))*M_PI/180.0);
         }
     }
+    fira_message::Field *field = env->mutable_field();
+    field->set_width(cfg->Field_Width());
+    field->set_length(cfg->Field_Length());
+    field->set_goal_depth(cfg->Goal_Depth());
+    field->set_goal_width(cfg->Goal_Width());
+    env->set_step(timer->elapsed());
     return env;
 }
 
