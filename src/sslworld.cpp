@@ -267,25 +267,29 @@ SSLWorld::SSLWorld(QGLWidget *parent, ConfigWidget *_cfg, RobotsFormation *form)
     srand(static_cast<unsigned>(time(0)));
 
     cfg->robotSettings = cfg->blueSettings;
-    for (int k = 0; k < cfg->Robots_Count() * 2; k++)
+
+    dReal dir = 1.0;
+    ball->setBodyPosition(0.38, 0.6, 0);
+    robots[0] = new CRobot(
+            p, ball, cfg,
+            0.3, 0.6, ROBOT_START_Z(cfg),
+            ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY,
+            1, wheeltexid, dir, true);
+    robots[1] = new CRobot(
+            p, ball, cfg,
+            0.7, 0.0, ROBOT_START_Z(cfg),
+            ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY,
+            2, wheeltexid, dir, true);
+    robots[2] = new CRobot(
+            p, ball, cfg,
+            0.3, 0.0, ROBOT_START_Z(cfg),
+            ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY,
+            3, wheeltexid, dir, true);
+    for (int k = 3; k < cfg->Robots_Count() * 2; k++)
     {
-        bool turn_on = (k % cfg->Robots_Count() < 3) ? true : false;
-        float LO_X = -0.65;
-        float LO_Y = -0.55;
-        float HI_X = 0.65;
-        float HI_Y = 0.55;
-        float dir = 1.0;
-        // if (k > cfg->Robots_Count())
-        // {
-        //     cfg->robotSettings = cfg->yellowSettings;
-        //     x = form->x[k - cfg->Robots_Count()];
-        //     y = -form->y[k - cfg->Robots_Count()];
-        //     dir = -1;
-        // }
-        float x = LO_X + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (HI_X - LO_X)));
-        float y = LO_Y + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (HI_Y - LO_Y)));
-        x = (k % cfg->Robots_Count() < 3) ? x : 3.0;
-        y = (k % cfg->Robots_Count() < 3) ? y : 3.0;
+        bool turn_on = false;
+        dReal x = 3.0;
+        dReal y = 3.0;
         robots[k] = new CRobot(
             p, ball, cfg,
             x, y, ROBOT_START_Z(cfg),
@@ -776,7 +780,6 @@ void SSLWorld::posProcess()
 {
 	bool side;
     bool is_goal = false;
-    bool out_of_bands = false;
 
     dReal bx, by, bz;
     ball->getBodyPosition(bx, by, bz);
@@ -793,201 +796,19 @@ void SSLWorld::posProcess()
         goals_yellow++;
         is_goal = true;
     }
-    if (bx < -2 || bx > 2 || by > 2 || by < -2)
-        out_of_bands = true;
 
-
-    bool penalty = false;
-    bool goal_shot = false;
-    if (bx < -0.6 && abs(by < 0.35))
+    if (is_goal || steps_super == 300)
     {
-	    // Penalti Detection
-        bool one_in_pen_area = false;
-        for (uint32_t i = 0; i < cfg->Robots_Count(); i++)
-        {
-            int num = robotIndex(i, 0);
-            if (!robots[num]->on)
-                continue;
-            dReal rx, ry;
-            robots[num]->getXY(rx, ry);
-            if (rx < -0.6 && abs(ry < 0.35))
-            {
-                if (one_in_pen_area){
-                    penalty = true;
-                    side = true;
-                }
-                else
-                    one_in_pen_area = true;
-            }
-        }
-
-		// Atk Fault Detection
-		if(withGoalKick)
-		{
-			bool one_in_enemy_area = false;
-		    for (uint32_t i = 0; i < cfg->Robots_Count(); i++)
-		    {
-		        int num = robotIndex(i, 1);
-		        if (!robots[num]->on)
-		            continue;
-		        dReal rx, ry;
-		        robots[num]->getXY(rx, ry);
-		        if (rx < -0.6 && abs(ry < 0.35))
-		        {
-		            if (one_in_enemy_area){
-                        goal_shot = true;
-                        side = false;
-
-                    }
-		            else
-		                one_in_enemy_area = true;
-		        }
-		    }
-		}
-    }
-
-    // Fault Detection
-    bool fault = false;
-    steps_fault++;
-    if (steps_fault * cfg->DeltaTime() * 1000 >= 10000)
-    {
-        if (ball_prev_pos.first == bx &&
-            ball_prev_pos.second == by)
-            fault = true;
-        ball_prev_pos.first = bx;
-        ball_prev_pos.second = by;
-    }
-    else
-    {
-        if (ball_prev_pos.first != bx ||
-            ball_prev_pos.second != by)
-        {
-            ball_prev_pos.first = bx;
-            ball_prev_pos.second = by;
-            steps_fault = 0;
-        }
-    }
-
-    // End Time Detection
-    time_before = time_after;
-    time_after = (int)(steps_super * cfg->DeltaTime() * 1000) / 300000;
-    bool end_time = time_after != time_before;
-
-    if ((((int)(steps_super * cfg->DeltaTime() * 1000) / 60000) - minute) > 0)
-    {
-        minute++;
-        std::cout << "****************** " << minute << " Minutes ****************" << std::endl;
-    }
-    
-    if (randomStart && (is_goal || penalty || fault || goal_shot || end_time))
-    {
-        dReal x, y;
-        for (uint32_t i = 0; i < cfg->Robots_Count() * 2; i++)
-        {
-            if (!robots[i]->on)
-                continue;
-            getValidPosition(x,y,i);
-            robots[i]->setXY(x, y);
-        }        
-        getValidPosition(x,y, cfg->Robots_Count() * 2);
-        ball->setBodyPosition(x, y, 0);
+        ball->setBodyPosition(0.38, 0.6, 0);
+        robots[0]->setXY(0.3, 0.6);
+        robots[0]->setDir(1.0);
+        robots[1]->setXY(0.7, 0);
+        robots[1]->setDir(1.0);
+        robots[2]->setXY(0.3, 0);
+        robots[2]->setDir(1.0);
         dBodySetLinearVel(ball->body, 0, 0, 0);
         dBodySetAngularVel(ball->body, 0, 0, 0);
-        steps_fault = 0;
-        
-    }else if(is_goal || end_time){
-        ball->setBodyPosition(0,0,0);
-        dBodySetLinearVel(ball->body, 0, 0, 0);
-        dBodySetAngularVel(ball->body, 0, 0, 0);
-
-        if(side)
-        {
-            dReal posX[6] = {0.15,0.35,0.71,-0.08,-0.35,-0.71};
-            dReal posY[6] = {0.02,0.13,-0.02,0.02,0.13,-0.02};
-            
-            for (uint32_t i = 0; i < cfg->Robots_Count()*2; i++)
-            {
-                robots[i]->setXY(posX[i]*(-1),posY[i]);
-            }
-            
-        }else
-        {
-            dReal posX[6] = {0.08,0.35,0.71,-0.15,-0.35,-0.71};
-            dReal posY[6] = {0.02,0.13,-0.02,0.02,0.13,-0.02};
-            for (uint32_t i = 0; i < cfg->Robots_Count()*2; i++)
-            {
-                robots[i]->setXY(posX[i]*(-1),posY[i]);
-            }
-        }
-        steps_fault = 0;
         steps_super = 0;
-        time_before = time_after = 0;
-        goals_blue = 0;
-        goals_yellow = 0;
-        minute = 0;
-        
-    }else if(penalty){
-        steps_fault = 0;
-
-        if(side)
-        {   
-            dReal posX[6] = {0.75, -0.06, -0.06, 0.35, -0.05,-0.74};
-            dReal posY[6] = {-0.01, 0.23, -0.33, 0.02, 0.48, 0.01};
-
-            ball->setBodyPosition(-0.47,-0.01,0);
-            dBodySetLinearVel(ball->body, 0, 0, 0);
-            dBodySetAngularVel(ball->body, 0, 0, 0);
-
-            for (uint32_t i = 0; i < cfg->Robots_Count()*2; i++)
-            {
-                robots[i]->setXY(posX[i]*(-1),posY[i]);
-
-            }
-        }else
-        {
-            dReal posX[6] = {0.35, -0.05,-0.74,0.75, -0.06, -0.06};
-            dReal posY[6] = {0.02, 0.48, 0.01,-0.01, 0.23, -0.33};
-            
-
-            ball->setBodyPosition(0.47,-0.01,0);
-            dBodySetLinearVel(ball->body, 0, 0, 0);
-            dBodySetAngularVel(ball->body, 0, 0, 0);
-            for (uint32_t i = 0; i < cfg->Robots_Count()*2; i++)
-            {
-                robots[i]->setXY(posX[i],posY[i]);
-
-            }
-        }
-        
-    }else if(fault){
-        steps_fault = 0;
-
-
-    }else if(goal_shot){
-        steps_fault = 0;
-
-        dReal posX[6] = {0.65, 0.48, 0.49, 0.19, 0.18, -0.67};
-        dReal posY[6] = {0.11, 0.37, -0.33, 0.13, -0.21, -0.01};
-        if(side)
-        {
-            ball->setBodyPosition(0.61, 0.11,0);
-            dBodySetLinearVel(ball->body, 0, 0, 0);
-            dBodySetAngularVel(ball->body, 0, 0, 0);
-            for (uint32_t i = 0; i < cfg->Robots_Count()*2; i++)
-            {
-                robots[i]->setXY(posX[i],posY[i]);
-            }
-        }else
-        {
-            ball->setBodyPosition(-0.61, 0.11,0);
-            dBodySetLinearVel(ball->body, 0, 0, 0);
-            dBodySetAngularVel(ball->body, 0, 0, 0);
-            for (uint32_t i = 0; i < cfg->Robots_Count()*2; i++)
-            {
-                robots[i]->setXY(posX[i]*(-1),posY[i]);
-            }
-        }
-
     }
 }
 
