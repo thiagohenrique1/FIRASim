@@ -102,8 +102,8 @@ public:
     RoboCupSSLServer *visionServer{};
     QUdpSocket *commandSocket{};
     bool updatedCursor;
-    bool withGoalKick = false;
-    bool randomStart = true;
+    bool withGoalKick = true;
+    bool randomStart = false;
     CRobot* robots[MAX_ROBOT_COUNT*2]{};
     QElapsedTimer *timer, *timer_fault;
     bool received = true;

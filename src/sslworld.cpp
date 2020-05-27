@@ -966,10 +966,12 @@ void SSLWorld::posProcess()
     }else if(goal_shot){
         steps_fault = 0;
 
-        dReal posX[6] = {0.65, 0.48, 0.49, 0.19, 0.18, -0.67};
         dReal posY[6] = {0.11, 0.37, -0.33, 0.13, -0.21, -0.01};
+
         if(side)
         {
+            dReal posX[6] = {0.19, 0.18, -0.67,0.65, 0.48, 0.49};
+
             ball->setBodyPosition(0.61, 0.11,0);
             dBodySetLinearVel(ball->body, 0, 0, 0);
             dBodySetAngularVel(ball->body, 0, 0, 0);
@@ -979,6 +981,8 @@ void SSLWorld::posProcess()
             }
         }else
         {
+            dReal posX[6] = {0.65, 0.48, 0.49, 0.19, 0.18, -0.67};
+
             ball->setBodyPosition(-0.61, 0.11,0);
             dBodySetLinearVel(ball->body, 0, 0, 0);
             dBodySetAngularVel(ball->body, 0, 0, 0);
