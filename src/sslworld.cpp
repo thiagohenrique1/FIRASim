@@ -269,7 +269,7 @@ SSLWorld::SSLWorld(QGLWidget *parent, ConfigWidget *_cfg, RobotsFormation *form)
     cfg->robotSettings = cfg->blueSettings;
 
     dReal dir = 1.0;
-    ball->setBodyPosition(0.38, 0.6, 0);
+    ball->setBodyPosition(0.38, 0.5, 0);
     robots[0] = new CRobot(
             p, ball, cfg,
             0.3, 0.6, ROBOT_START_Z(cfg),
@@ -277,14 +277,14 @@ SSLWorld::SSLWorld(QGLWidget *parent, ConfigWidget *_cfg, RobotsFormation *form)
             1, wheeltexid, dir, true);
     robots[1] = new CRobot(
             p, ball, cfg,
-            0.7, 0.0, ROBOT_START_Z(cfg),
-            ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY,
-            2, wheeltexid, dir, true);
-    robots[2] = new CRobot(
-            p, ball, cfg,
-            0.3, 0.0, ROBOT_START_Z(cfg),
+            0.15, 0.0, ROBOT_START_Z(cfg),
             ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY,
             3, wheeltexid, dir, true);
+    robots[2] = new CRobot(
+            p, ball, cfg,
+            0.7, 0.2, ROBOT_START_Z(cfg),
+            ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY,
+            2, wheeltexid, dir, true);
     for (int k = 3; k < cfg->Robots_Count() * 2; k++)
     {
         bool turn_on = false;
@@ -799,12 +799,12 @@ void SSLWorld::posProcess()
 
     if (is_goal || steps_super == 300)
     {
-        ball->setBodyPosition(0.38, 0.6, 0);
+        ball->setBodyPosition(0.38, 0.5, 0);
         robots[0]->setXY(0.3, 0.6);
         robots[0]->setDir(1.0);
-        robots[1]->setXY(0.7, 0);
+        robots[1]->setXY(0.15, 0);
         robots[1]->setDir(1.0);
-        robots[2]->setXY(0.3, 0);
+        robots[2]->setXY(0.7, 0.2);
         robots[2]->setDir(1.0);
         dBodySetLinearVel(ball->body, 0, 0, 0);
         dBodySetAngularVel(ball->body, 0, 0, 0);
