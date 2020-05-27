@@ -726,7 +726,7 @@ Environment *SSLWorld::generatePacket()
                 rob = env->mutable_frame()->add_robots_blue();
             else
                 rob = env->mutable_frame()->add_robots_yellow();
-            rob->set_robot_id(i - cfg->Robots_Count());
+            //rob->set_robot_id(i - cfg->Robots_Count());
             if (i >= cfg->Robots_Count())
                 rob->set_robot_id(i - cfg->Robots_Count());
             else
@@ -846,6 +846,52 @@ void SSLWorld::posProcess()
 		}
     }
 
+    else if (bx > 0.6 && abs(by < 0.35))
+    {
+	    // Penalti Detection
+        bool one_in_pen_area = false;
+        for (uint32_t i =0; i < cfg->Robots_Count(); i++)
+        {
+            int num = robotIndex(i, 1);
+            if (!robots[num]->on)
+                continue;
+            dReal rx, ry;
+            robots[num]->getXY(rx, ry);
+            if (rx > 0.6 && abs(ry < 0.35))
+            {
+                if (one_in_pen_area){
+                    penalty = true;
+                    side = false;
+                }
+                else
+                    one_in_pen_area = true;
+            }
+        }
+
+		// Atk Fault Detection
+		if(withGoalKick)
+		{
+			bool one_in_enemy_area = false;
+		    for (uint32_t i = 0; i < cfg->Robots_Count(); i++)
+		    {
+		        int num = robotIndex(i, 0);
+		        if (!robots[num]->on)
+		            continue;
+		        dReal rx, ry;
+		        robots[num]->getXY(rx, ry);
+		        if (rx > 0.6 && abs(ry < 0.35))
+		        {
+		            if (one_in_enemy_area){
+                        goal_shot = true;
+                        side = true;
+
+                    }
+		            else
+		                one_in_enemy_area = true;
+		        }
+		    }
+		}
+    }
     // Fault Detection
     bool fault = false;
     steps_fault++;
