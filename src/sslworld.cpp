@@ -797,7 +797,38 @@ void SSLWorld::posProcess()
         is_goal = true;
     }
 
-    if (is_goal || steps_super == 300)
+    // End Time Detection
+    time_before = time_after;
+    time_after = (int)(steps_super * cfg->DeltaTime() * 1000) / 300000;
+    bool end_time = time_after != time_before;
+    if ((((int)(steps_super * cfg->DeltaTime() * 1000) / 60000) - minute) > 0)
+    {
+        minute++;
+        std::cout << "****************** " << minute << " Minutes ****************" << std::endl;
+    }
+
+    bool fault = false;
+    steps_fault++;
+    if (steps_fault * cfg->DeltaTime() * 1000 >= 30000)
+        fault = true;
+
+    if(end_time)
+    {
+        time_before = time_after = 0;
+        steps_super = 0;
+        steps_fault = 0;
+        minute = 0;
+        ball->setBodyPosition(0.38, 0.5, 0);
+        robots[0]->setXY(0.3, 0.6);
+        robots[0]->setDir(1.0);
+        robots[1]->setXY(0.15, 0);
+        robots[1]->setDir(1.0);
+        robots[2]->setXY(0.7, 0.2);
+        robots[2]->setDir(1.0);
+        dBodySetLinearVel(ball->body, 0, 0, 0);
+        dBodySetAngularVel(ball->body, 0, 0, 0);
+    }
+    else if (is_goal || fault)
     {
         ball->setBodyPosition(0.38, 0.5, 0);
         robots[0]->setXY(0.3, 0.6);
@@ -808,7 +839,7 @@ void SSLWorld::posProcess()
         robots[2]->setDir(1.0);
         dBodySetLinearVel(ball->body, 0, 0, 0);
         dBodySetAngularVel(ball->body, 0, 0, 0);
-        steps_super = 0;
+        steps_fault = 0;
     }
 }
 
