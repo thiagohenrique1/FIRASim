@@ -46,7 +46,7 @@ Next, clone FIRASim into your preferred location.
 ```bash
 $ cd /path/to/firasim_ws
 $ git clone https://github.com/robocin/FIRASim.git
-$ cd grSim
+$ cd FIRASim
 ```
 
 Create a build directory within the project (this is ignored by .gitignore):
