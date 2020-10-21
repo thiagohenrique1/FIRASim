@@ -45,8 +45,8 @@ Next, clone FIRASim into your preferred location.
 
 ```bash
 $ cd /path/to/firasim_ws
-$ git clone https://github.com/fira-simurosot/FIRASim.git
-$ cd grSim
+$ git clone https://github.com/robocin/FIRASim.git
+$ cd FIRASim
 ```
 
 Create a build directory within the project (this is ignored by .gitignore):
@@ -101,7 +101,7 @@ The steps to compile FIRASim on Mac OS is similar to the steps outlines above fo
 
 ```bash
 $ cd /path/to/firasim_ws
-$ git clone https://github.com/fira-simurosot/FIRASim.git
+$ git clone https://github.com/robocin/FIRASim.git
 $ cd ./grSim
 $ mkdir build
 $ cd build

@@ -34,6 +34,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 
 using namespace fira_message::sim_to_ref;
 
+
 #define WHEEL_COUNT 2
 
 SSLWorld *_w;
@@ -141,7 +142,6 @@ bool ballCallBack(dGeomID o1, dGeomID o2, PSurface *s, int /*robots_count*/)
 SSLWorld::SSLWorld(QGLWidget *parent, ConfigWidget *_cfg, RobotsFormation *form)
     : QObject(parent)
 {
-    steps = 0;
     steps_super = 0;
     steps_fault = 0;
     isGLEnabled = true;
@@ -507,7 +507,6 @@ void SSLWorld::step(dReal dt)
     }
 
     steps_super++;
-    steps++;
 
     int best_k = -1;
     dReal best_dist = 1e8;
@@ -572,7 +571,8 @@ void SSLWorld::step(dReal dt)
         g->finalizeScene();
 
     sendVisionBuffer();
-    posProcess();
+    //Internal Arbiter. Not used.
+    //posProcess();
     frame_num++;
     received = false;
 }
@@ -726,7 +726,7 @@ Environment *SSLWorld::generatePacket()
                 rob = env->mutable_frame()->add_robots_blue();
             else
                 rob = env->mutable_frame()->add_robots_yellow();
-            rob->set_robot_id(i - cfg->Robots_Count());
+            
             if (i >= cfg->Robots_Count())
                 rob->set_robot_id(i - cfg->Robots_Count());
             else
@@ -799,7 +799,7 @@ void SSLWorld::posProcess()
 
     bool penalty = false;
     bool goal_shot = false;
-    if (bx < -0.6 && abs(by < 0.35))
+    if (bx < -0.6 && abs(by) < 0.35)
     {
 	    // Penalti Detection
         bool one_in_pen_area = false;
@@ -810,7 +810,7 @@ void SSLWorld::posProcess()
                 continue;
             dReal rx, ry;
             robots[num]->getXY(rx, ry);
-            if (rx < -0.6 && abs(ry < 0.35))
+            if (rx < -0.6 && abs(ry) < 0.35)
             {
                 if (one_in_pen_area){
                     penalty = true;
@@ -832,7 +832,7 @@ void SSLWorld::posProcess()
 		            continue;
 		        dReal rx, ry;
 		        robots[num]->getXY(rx, ry);
-		        if (rx < -0.6 && abs(ry < 0.35))
+		        if (rx < -0.6 && abs(ry) < 0.35)
 		        {
 		            if (one_in_enemy_area){
                         goal_shot = true;
@@ -846,32 +846,106 @@ void SSLWorld::posProcess()
 		}
     }
 
+   
+    if (bx > 0.6 && abs(by) < 0.35)
+    {
+	    // Penalti Detection
+        bool one_in_pen_area = false;
+        for (uint32_t i = 0; i < cfg->Robots_Count(); i++)
+        {
+            int num = robotIndex(i, 1);
+            if (!robots[num]->on)
+                continue;
+            dReal rx, ry;
+            robots[num]->getXY(rx, ry);
+            if (rx > 0.6 && abs(ry) < 0.35)
+            {
+                if (one_in_pen_area){
+                    penalty = true;
+                    side =false;
+                }
+                else
+                    one_in_pen_area = true;
+            }
+        }
+
+		// Atk Fault Detection
+		if(withGoalKick)
+		{
+			bool one_in_enemy_area = false;
+		    for (uint32_t i = 0; i < cfg->Robots_Count(); i++)
+		    {
+		        int num = robotIndex(i, 0);
+		        if (!robots[num]->on)
+		            continue;
+		        dReal rx, ry;
+		        robots[num]->getXY(rx, ry);
+		        if (rx > 0.6 && abs(ry) < 0.35)
+		        {
+		            if (one_in_enemy_area){
+                        goal_shot = true;
+                        side = true;
+
+                    }
+		            else
+		                one_in_enemy_area = true;
+		        }
+		    }
+		}
+    }
+
     // Fault Detection
     bool fault = false;
     steps_fault++;
+    int quadrant = 4;
     if (steps_fault * cfg->DeltaTime() * 1000 >= 10000)
     {
-        if (ball_prev_pos.first == bx &&
-            ball_prev_pos.second == by)
-            fault = true;
+        if (fabs(ball_prev_pos.first - bx) < 0.0001 &&
+            fabs(ball_prev_pos.second - by) < 0.0001){
+            if ((bx < -0.6) && abs(by) < 0.35){
+                penalty = true;
+                side = true;                
+            }else if(bx > 0.6 && abs(by) < 0.35){
+
+                penalty = true;
+                side = false;
+            }else{
+                fault = true;
+                if(bx < 0 && by <= 0){
+                   quadrant = 0;
+                }else if(bx < 0 && by >= 0){
+                    quadrant = 1;
+                }else if(bx > 0 && by <= 0){
+                    quadrant = 2;
+                }else if(bx > 0 && by >= 0){
+                    quadrant = 3;
+                }
+            }
+        }
         ball_prev_pos.first = bx;
         ball_prev_pos.second = by;
+        steps_fault = 0;
     }
     else
-    {
-        if (ball_prev_pos.first != bx ||
-            ball_prev_pos.second != by)
+    {   
+        if (fabs(ball_prev_pos.first - bx) > 0.0001 ||
+            fabs(ball_prev_pos.second - by) > 0.0001)
         {
-            ball_prev_pos.first = bx;
-            ball_prev_pos.second = by;
             steps_fault = 0;
         }
     }
+    ball_prev_pos.first = bx;
+    ball_prev_pos.second = by;
 
     // End Time Detection
-    time_before = time_after;
-    time_after = (int)(steps_super * cfg->DeltaTime() * 1000) / 300000;
-    bool end_time = time_after != time_before;
+    bool end_time;
+    
+    if((steps_super * cfg->DeltaTime() * 1000) > 300000){
+        end_time = true;
+    } else{
+        end_time = false;
+    }
+    
 
     if ((((int)(steps_super * cfg->DeltaTime() * 1000) / 60000) - minute) > 0)
     {
@@ -893,7 +967,15 @@ void SSLWorld::posProcess()
         ball->setBodyPosition(x, y, 0);
         dBodySetLinearVel(ball->body, 0, 0, 0);
         dBodySetAngularVel(ball->body, 0, 0, 0);
-        steps_fault = 0;
+
+       steps_fault = 0;
+        if(end_time){
+            steps_super = 0;
+            goals_blue = 0;
+            goals_yellow = 0;
+            minute = 0;
+        }
+        
         
     }else if(is_goal || end_time){
         ball->setBodyPosition(0,0,0);
@@ -918,15 +1000,71 @@ void SSLWorld::posProcess()
             {
                 robots[i]->setXY(posX[i]*(-1),posY[i]);
             }
+        }if(end_time){
+            steps_fault = 0;
+            steps_super = 0;
+            goals_blue = 0;
+            goals_yellow = 0;
+            minute = 0;
+        }
+        
+        
+        
+    }else if(fault){
+        if(quadrant == 0){
+            ball->setBodyPosition(-0.375,-0.4,0);
+            dBodySetLinearVel(ball->body, 0, 0, 0);
+            dBodySetAngularVel(ball->body, 0, 0, 0);
+
+            dReal posX[6] = {-0.575,-0.44,-0.71,-0.175,-0.3,0.71};
+            dReal posY[6] = {-0.4,0.13,-0.02,-0.4,0.13,-0.02};
+            
+            for (uint32_t i = 0; i < cfg->Robots_Count()*2; i++)
+            {
+                robots[i]->setXY(posX[i],posY[i]);
+            }
+
+        }else if(quadrant == 1){
+            ball->setBodyPosition(-0.375,0.4,0);
+            dBodySetLinearVel(ball->body, 0, 0, 0);
+            dBodySetAngularVel(ball->body, 0, 0, 0);
+
+            dReal posX[6] = {-0.575,-0.44,-0.71,-0.175,-0.30,0.71};
+            dReal posY[6] = {0.4,-0.13,-0.02,0.4,-0.13,-0.02};
+            
+            for (uint32_t i = 0; i < cfg->Robots_Count()*2; i++)
+            {
+                robots[i]->setXY(posX[i],posY[i]);
+            }
+        }else if(quadrant == 2){
+            ball->setBodyPosition(0.375,-0.4,0);
+            dBodySetLinearVel(ball->body, 0, 0, 0);
+            dBodySetAngularVel(ball->body, 0, 0, 0);
+
+            dReal posX[6] = {0.175,0.3,-0.71,0.575,0.44,0.71};
+            dReal posY[6] = {-0.4,0.13,-0.02,-0.4,0.13,-0.02};
+            
+            for (uint32_t i = 0; i < cfg->Robots_Count()*2; i++)
+            {
+                robots[i]->setXY(posX[i],posY[i]);
+            }
+        }else if(quadrant == 3){
+            ball->setBodyPosition(0.375,0.4,0);
+            dBodySetLinearVel(ball->body, 0, 0, 0);
+            dBodySetAngularVel(ball->body, 0, 0, 0);
+
+            dReal posX[6] = {0.175,0.3,-0.71,0.575,0.44,0.71};
+            dReal posY[6] = {0.4,-0.13,-0.02,0.4,-0.13,-0.02};
+            
+            for (uint32_t i = 0; i < cfg->Robots_Count()*2; i++)
+            {
+                robots[i]->setXY(posX[i],posY[i]);
+            }
         }
         steps_fault = 0;
-        steps_super = 0;
-        time_before = time_after = 0;
-        goals_blue = 0;
-        goals_yellow = 0;
-        minute = 0;
-        
+
     }else if(penalty){
+
         steps_fault = 0;
 
         if(side)
@@ -959,11 +1097,8 @@ void SSLWorld::posProcess()
             }
         }
         
-    }else if(fault){
-        steps_fault = 0;
-
-
     }else if(goal_shot){
+
         steps_fault = 0;
 
         dReal posX[6] = {0.65, 0.48, 0.49, 0.19, 0.18, -0.67};
