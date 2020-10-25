@@ -101,7 +101,7 @@ The steps to compile FIRASim on Mac OS is similar to the steps outlines above fo
 
 ```bash
 $ cd /path/to/firasim_ws
-$ git clone https://github.com/robocin/FIRASim.git
+$ git clone https://github.com/IEEEVSS/FIRASim.git
 $ cd ./grSim
 $ mkdir build
 $ cd build
