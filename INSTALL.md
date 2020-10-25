@@ -45,7 +45,7 @@ Next, clone FIRASim into your preferred location.
 
 ```bash
 $ cd /path/to/firasim_ws
-$ git clone https://github.com/robocin/FIRASim.git
+$ git clone https://github.com/IEEEVSS/FIRASim.git
 $ cd FIRASim
 ```
 
