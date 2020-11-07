@@ -508,7 +508,7 @@ void MainWindow::reconnectVisionSocket()
 void MainWindow::recvActions()
 {
     glwidget->ssl->recvActions();
-    update();
+    //update();
 }
 
 void MainWindow::sendBuffer()
