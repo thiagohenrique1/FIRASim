@@ -49,8 +49,6 @@ public:
     ConfigWidget *cfg;
     dSpaceID space;
     PObject *chassis;
-    PBox *dummy;
-    dJointID dummy_to_chassis;
     PBox *boxes[3]{};
     bool on;
     //these values are not controled by this class
@@ -103,6 +101,6 @@ public:
     PWorld *getWorld();
 };
 
-#define ROBOT_START_Z(cfg) ((cfg)->robotSettings.RobotHeight * 0.5 + (cfg)->robotSettings.WheelRadius * 1 + (cfg)->robotSettings.BottomHeight)
+#define ROBOT_START_Z(cfg) ((cfg)->robotSettings.RobotHeight * 0.5 + (cfg)->robotSettings.BottomHeight)
 
 #endif // ROBOT_H
