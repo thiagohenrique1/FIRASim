@@ -36,7 +36,7 @@ RobotWidget::RobotWidget(QWidget* parent, ConfigWidget* cfg)
     robotCombo = new QComboBox(this);
 
     // Add items to the combo box dynamically 
-    for (int i=0; i<cfg->Robots_Count(); i++){
+    for (int i=0; i<MAX_ROBOT_COUNT; i++){
       QString item=QString::number(i);
       robotCombo->addItem(item);
     }
