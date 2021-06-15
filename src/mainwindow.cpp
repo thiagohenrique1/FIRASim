@@ -397,7 +397,18 @@ void MainWindow::changeBallDamping()
 void MainWindow::restartSimulator()
 {        
     delete glwidget->ssl;
-    glwidget->ssl = new SSLWorld(glwidget,glwidget->cfg,glwidget->forms[2]);
+   
+    if(configwidget->Division() == "Division A") {
+    	configwidget->v_Robots_Count->setInt(5);
+    }
+    else if(configwidget->Division() == "Division B") {
+    	configwidget->v_Robots_Count->setInt(3);
+    }
+   
+    glwidget->forms[4] = new RobotsFormation(3, glwidget->cfg); 
+    glwidget->forms[5] = new RobotsFormation(4, glwidget->cfg);
+    glwidget->ssl = new SSLWorld(glwidget, glwidget->cfg, (configwidget->Division() == "Division A") ? glwidget->forms[4] : glwidget->forms[5]);
+    
     glwidget->ssl->glinit();
     glwidget->ssl->visionServer = visionServer;
     glwidget->ssl->commandSocket = commandSocket;
