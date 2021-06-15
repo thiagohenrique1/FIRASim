@@ -108,10 +108,10 @@ ConfigWidget::ConfigWidget()
   VarListPtr ballp_vars(new VarList("Ball"));
     phys_vars->addChild(ballp_vars);
         ADD_VALUE(ballp_vars,Double,BallMass,0.043,"Ball mass");
-        ADD_VALUE(ballp_vars,Double,BallFriction,0.05,"Ball-ground friction")
-        ADD_VALUE(ballp_vars,Double,BallSlip,1,"Ball-ground slip")
+        ADD_VALUE(ballp_vars,Double,BallFriction,0.06,"Ball-ground friction")
+        ADD_VALUE(ballp_vars,Double,BallSlip,0.09,"Ball-ground slip")
         ADD_VALUE(ballp_vars,Double,BallBounce,0.5,"Ball-ground bounce factor")
-        ADD_VALUE(ballp_vars,Double,BallBounceVel,0.1,"Ball-ground bounce min velocity")
+        ADD_VALUE(ballp_vars,Double,BallBounceVel,0.01,"Ball-ground bounce min velocity")
         ADD_VALUE(ballp_vars,Double,BallLinearDamp,0.004,"Ball linear damping")
         ADD_VALUE(ballp_vars,Double,BallAngularDamp,0.004,"Ball angular damping")
   VarListPtr comm_vars(new VarList("Communication"));

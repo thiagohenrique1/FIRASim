@@ -477,16 +477,22 @@ void SSLWorld::step(dReal dt)
         dReal balltx = 0, ballty = 0, balltz = 0;
         if (ballspeed < 0.01)
         {
-            ; //const dReal* ballAngVel = dBodyGetAngularVel(ball->body);
+
+            //const dReal* ballAngVel = dBodyGetAngularVel(ball->body);
             //TODO: what was supposed to be here?
+            //dReal accel = last_speed - ballspeed;
+            //dReal fk = accel * cfg->BallFriction() * cfg->BallMass() * cfg->Gravity();
+            dBodySetAngularVel(ball->body, 0, 0, 0);
+            dBodySetLinearVel(ball->body, 0, 0, 0);
         }
         else
         {
             // Velocidade real  normalizada (com atrito envolvido) da bola
-            dReal accel = last_speed - ballspeed;
-            accel = -accel / dt;
-            last_speed = ballspeed;
-            dReal fk = accel * cfg->BallFriction() * cfg->BallMass() * cfg->Gravity();
+            //dReal accel = last_speed - ballspeed;
+            //accel = -accel / dt;
+            //last_speed = ballspeed;
+            //dReal fk = accel * cfg->BallFriction() * cfg->BallMass() * cfg->Gravity();
+            dReal fk = cfg->BallFriction() * cfg->BallMass() * cfg->Gravity() * cfg->BallSlip();
             ballfx = -fk * ballvel[0] / ballspeed;
             ballfy = -fk * ballvel[1] / ballspeed;
             ballfz = -fk * ballvel[2] / ballspeed;
@@ -494,8 +500,9 @@ void SSLWorld::step(dReal dt)
             ballty = ballfx * cfg->BallRadius();
             balltz = 0;
             dBodyAddTorque(ball->body, balltx, ballty, balltz);
+            dBodyAddForce(ball->body,ballfx,ballfy,ballfz);
         }
-        dBodyAddForce(ball->body, ballfx, ballfy, ballfz);
+        //dBodyAddForce(ball->body, ballfx, ballfy, ballfz);
         if (dt == 0)
             dt = last_dt;
         else
