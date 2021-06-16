@@ -757,6 +757,10 @@ Environment *SSLWorld::generatePacket()
     field->set_length(cfg->Field_Length());
     field->set_goal_depth(cfg->Goal_Depth());
     field->set_goal_width(cfg->Goal_Width());
+    field->set_center_radius(cfg->Field_Rad());
+    field->set_penalty_width(cfg->Field_Penalty_Width());
+    field->set_penalty_depth(cfg->Field_Penalty_Depth());
+    field->set_penalty_point(cfg->Field_Penalty_Point());
     env->set_step(t);
     env->set_goals_blue(this->goals_blue);
     env->set_goals_yellow(this->goals_yellow);

@@ -26,6 +26,10 @@ message Field {
     double length = 2;
     double goal_width = 3;
     double goal_depth = 4;
+    double center_radius = 5;
+    double penalty_width = 6;
+    double penalty_depth = 7;
+    double penalty_point = 8;
 }
 
 message Frame {
