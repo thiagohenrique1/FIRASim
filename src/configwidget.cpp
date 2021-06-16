@@ -42,49 +42,50 @@ ConfigWidget::ConfigWidget()
 
   VarListPtr game_vars(new VarList("Game"));
   geo_vars->addChild(game_vars);
-  ADD_ENUM(StringEnum, Division, "Division A", "Division")
+  ADD_ENUM(StringEnum, Division, "Division B", "Division")
   ADD_TO_ENUM(Division, "Division A");
   ADD_TO_ENUM(Division, "Division B");
   END_ENUM(game_vars, Division);
   ADD_VALUE(game_vars,Int, Robots_Count, 3, "Robots Count")
   VarListPtr fields_vars(new VarList("Field"));
-  VarListPtr div_a_vars(new VarList("Division A"));
-  VarListPtr div_b_vars(new VarList("Division B"));
+  VarListPtr vsss_a_vars(new VarList("VSSS A"));
+  VarListPtr vsss_b_vars(new VarList("VSSS B"));
   geo_vars->addChild(fields_vars);
-  fields_vars->addChild(div_a_vars);
-  fields_vars->addChild(div_b_vars);
+  fields_vars->addChild(vsss_a_vars);
+  fields_vars->addChild(vsss_b_vars);
+  
+  ADD_VALUE(vsss_a_vars, Double, DivA_Field_Line_Width,0.003,"Line Thickness")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Field_Length,2.200,"Length")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Field_Width,1.800,"Width")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Field_Rad,0.25,"Radius")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Field_Free_Kick,0.25,"Free Kick Distance From Defense Area")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Field_Penalty_Width,0.50,"Penalty width")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Field_Penalty_Depth,0.15,"Penalty depth")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Field_Penalty_Point,0.375,"Penalty point")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Field_Margin,0.30,"Margin")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Field_Referee_Margin,0.4,"Referee margin")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Wall_Thickness,0.025,"Wall thickness")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Goal_Thickness,0.025,"Goal thickness")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Goal_Depth,0.150,"Goal depth")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Goal_Width,0.40,"Goal width")
+  ADD_VALUE(vsss_a_vars, Double, DivA_Goal_Height,0.05,"Goal height")
+  
+  ADD_VALUE(vsss_b_vars, Double, DivB_Field_Line_Width,0.003,"Line Thickness")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Field_Length,1.50,"Length")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Field_Width,1.300,"Width")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Field_Rad,0.200,"Radius")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Field_Free_Kick,0.200,"Free Kick Distance From Defense Area")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Field_Penalty_Width,0.70,"Penalty width")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Field_Penalty_Depth,0.15,"Penalty depth")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Field_Penalty_Point,0.375,"Penalty point")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Field_Margin,0.3,"Margin")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Field_Referee_Margin,0.4,"Referee margin")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Wall_Thickness,0.025,"Wall thickness")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Goal_Thickness,0.025,"Goal thickness")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Goal_Depth,0.10,"Goal depth")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Goal_Width,0.40,"Goal width")
+  ADD_VALUE(vsss_b_vars, Double, DivB_Goal_Height,0.05,"Goal height")
 
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Line_Width,0.003,"Line Thickness")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Length,1.50,"Length")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Width,1.300,"Width")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Rad,0.200,"Radius")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Free_Kick,0.200,"Free Kick Distance From Defense Area")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Penalty_Width,0.70,"Penalty width")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Penalty_Depth,0.15,"Penalty depth")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Penalty_Point,0.35,"Penalty point")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Margin,0.3,"Margin")
-  ADD_VALUE(div_a_vars, Double, DivA_Field_Referee_Margin,0.4,"Referee margin")
-  ADD_VALUE(div_a_vars, Double, DivA_Wall_Thickness,0.025,"Wall thickness")
-  ADD_VALUE(div_a_vars, Double, DivA_Goal_Thickness,0.025,"Goal thickness")
-  ADD_VALUE(div_a_vars, Double, DivA_Goal_Depth,0.10,"Goal depth")
-  ADD_VALUE(div_a_vars, Double, DivA_Goal_Width,0.40,"Goal width")
-  ADD_VALUE(div_a_vars, Double, DivA_Goal_Height,0.05,"Goal height")
-
-  ADD_VALUE(div_b_vars, Double, DivB_Field_Line_Width,0.003,"Line Thickness")
-  ADD_VALUE(div_b_vars, Double, DivB_Field_Length,2.200,"Length")
-  ADD_VALUE(div_b_vars, Double, DivB_Field_Width,1.800,"Width")
-  ADD_VALUE(div_b_vars, Double, DivB_Field_Rad,0.25,"Radius")
-  ADD_VALUE(div_b_vars, Double, DivB_Field_Free_Kick,0.25,"Free Kick Distance From Defense Area")
-  ADD_VALUE(div_b_vars, Double, DivB_Field_Penalty_Width,0.800,"Penalty width")
-  ADD_VALUE(div_b_vars, Double, DivB_Field_Penalty_Depth,0.35,"Penalty depth")
-  ADD_VALUE(div_b_vars, Double, DivB_Field_Penalty_Point,0.375,"Penalty point")
-  ADD_VALUE(div_b_vars, Double, DivB_Field_Margin,0.30,"Margin")
-  ADD_VALUE(div_b_vars, Double, DivB_Field_Referee_Margin,0.4,"Referee margin")
-  ADD_VALUE(div_b_vars, Double, DivB_Wall_Thickness,0.025,"Wall thickness")
-  ADD_VALUE(div_b_vars, Double, DivB_Goal_Thickness,0.025,"Goal thickness")
-  ADD_VALUE(div_b_vars, Double, DivB_Goal_Depth,0.150,"Goal depth")
-  ADD_VALUE(div_b_vars, Double, DivB_Goal_Width,0.40,"Goal width")
-  ADD_VALUE(div_b_vars, Double, DivB_Goal_Height,0.05,"Goal height")
 
   ADD_ENUM(StringEnum,YellowTeam,"Parsian","Yellow Team");
   END_ENUM(geo_vars,YellowTeam)
@@ -107,10 +108,10 @@ ConfigWidget::ConfigWidget()
   VarListPtr ballp_vars(new VarList("Ball"));
     phys_vars->addChild(ballp_vars);
         ADD_VALUE(ballp_vars,Double,BallMass,0.043,"Ball mass");
-        ADD_VALUE(ballp_vars,Double,BallFriction,0.05,"Ball-ground friction")
-        ADD_VALUE(ballp_vars,Double,BallSlip,1,"Ball-ground slip")
+        ADD_VALUE(ballp_vars,Double,BallFriction,0.06,"Ball-ground friction")
+        ADD_VALUE(ballp_vars,Double,BallSlip,0.09,"Ball-ground slip")
         ADD_VALUE(ballp_vars,Double,BallBounce,0.5,"Ball-ground bounce factor")
-        ADD_VALUE(ballp_vars,Double,BallBounceVel,0.1,"Ball-ground bounce min velocity")
+        ADD_VALUE(ballp_vars,Double,BallBounceVel,0.01,"Ball-ground bounce min velocity")
         ADD_VALUE(ballp_vars,Double,BallLinearDamp,0.004,"Ball linear damping")
         ADD_VALUE(ballp_vars,Double,BallAngularDamp,0.004,"Ball angular damping")
   VarListPtr comm_vars(new VarList("Communication"));

@@ -627,10 +627,33 @@ void CGraphics::drawSSLGround(dReal SSL_FIELD_RAD,dReal SSL_FIELD_LENGTH,dReal S
     auto pdep = static_cast<GLfloat>(SSL_FIELD_PENALTY_DEPTH);
     auto pwid = static_cast<GLfloat>(SSL_FIELD_PENALTY_WIDTH);
     auto epsilon = static_cast<GLfloat>(_epsilon);
+    const double anglestep = M_PI/30.f;
     glEnable(GL_DEPTH_TEST);
     glPushMatrix();
     glScaled(1.0, 1.0, 1);
     glColor3f(1.0f,1.0f,1.0f);
+
+    // Free ball points
+    glBegin(GL_POLYGON);
+    for(angle=0.0f; angle <= 2.0 * M_PI; angle+=anglestep)
+        glVertex3f(-fw + fw/2 + cos(angle) * lw, fh - fh/3 + sin(angle) * lw, epsilon);
+    glEnd();
+    
+    glBegin(GL_POLYGON);
+    for(angle=0.0f; angle <= 2.0 * M_PI; angle+=anglestep)
+        glVertex3f(-fw + fw/2 + cos(angle) * lw, -fh + fh/3 + sin(angle) * lw, epsilon);
+    glEnd();
+    
+    glBegin(GL_POLYGON);
+    for(angle=0.0f; angle <= 2.0 * M_PI; angle+=anglestep)
+        glVertex3f(fw - fw/2 + cos(angle) * lw, fh - fh/3 + sin(angle) * lw, epsilon);
+    glEnd();
+    
+    glBegin(GL_POLYGON);
+    for(angle=0.0f; angle <= 2.0 * M_PI; angle+=anglestep)
+        glVertex3f(fw - fw/2 + cos(angle) * lw, -fh + fh/3 + sin(angle) * lw, epsilon);
+    glEnd();
+    
 
     //Field rectangle
 
@@ -672,8 +695,6 @@ void CGraphics::drawSSLGround(dReal SSL_FIELD_RAD,dReal SSL_FIELD_LENGTH,dReal S
     glEnd();
 
     //Middle circle
-
-    const double anglestep = M_PI/20.f;
     double cos1, cos2, sin1, sin2;
 
     cos1 = cos(-anglestep);
@@ -715,7 +736,56 @@ void CGraphics::drawSSLGround(dReal SSL_FIELD_RAD,dReal SSL_FIELD_LENGTH,dReal S
     glVertex3f(-fw + pdep, (pwid / 2), epsilon);
     glVertex3f(-fw , (pwid / 2), epsilon);
     glEnd();
+    
+    if(fw > 1.0) {
+        float gAreaDepth = 0.35;
+        float gAreaWidth = 0.80;
+    	glBegin(GL_QUADS);
+	    glVertex3f(-fw , -(gAreaWidth / 2)      , epsilon);
+	    glVertex3f(-fw , -(gAreaWidth / 2) - lw , epsilon);
+	    glVertex3f(-fw + gAreaDepth , -(gAreaWidth / 2) - lw , epsilon);
+	    glVertex3f(-fw + gAreaDepth , -(gAreaWidth / 2) , epsilon);
+	    glEnd();
 
+	    glBegin(GL_QUADS);
+	    glVertex3f(-fw - lw + gAreaDepth,  -(gAreaWidth / 2), epsilon);
+	    glVertex3f(-fw + gAreaDepth , -(gAreaWidth / 2), epsilon);
+	    glVertex3f(-fw + gAreaDepth , (gAreaWidth / 2), epsilon);
+	    glVertex3f(-fw - lw + gAreaDepth , (gAreaWidth / 2), epsilon);
+	    glEnd();
+
+	    glBegin(GL_QUADS);
+	    glVertex3f(-fw , (gAreaWidth / 2) - lw, epsilon);
+	    glVertex3f(-fw + gAreaDepth, (gAreaWidth / 2) - lw, epsilon);
+	    glVertex3f(-fw + gAreaDepth, (gAreaWidth / 2), epsilon);
+	    glVertex3f(-fw , (gAreaWidth / 2), epsilon);
+	    glEnd();
+	    
+	    // Circle left defense area
+        const double defRad = 0.125;
+        const double shiftToInside = 0.075;
+        float maxX = -fw + gAreaDepth;
+
+        cos1 = cos(-anglestep);
+        sin1 = sin(-anglestep);
+        for(angle = (3.0*M_PI)/2.0; angle <= (3.0*M_PI)/2.0 + M_PI; angle += anglestep) {
+        
+            cos2 = cos(angle);
+            sin2 = sin(angle);
+
+            if(fabs(-fw - shiftToInside + cos1 * (defRad - lw) + gAreaDepth) < fabs(maxX)){
+                glBegin(GL_QUADS);
+                glVertex3f(-fw - shiftToInside + cos1 * (defRad - lw) + gAreaDepth, sin1 * (defRad - lw), epsilon);
+                glVertex3f(-fw - shiftToInside + cos1 * defRad        + gAreaDepth, sin1 * defRad       , epsilon);
+                glVertex3f(-fw - shiftToInside + cos2 * defRad       + gAreaDepth, sin2 * defRad       , epsilon);
+                glVertex3f(-fw - shiftToInside + cos2 * (defRad - lw) + gAreaDepth, sin2 * (defRad - lw), epsilon);
+                glEnd();
+            }
+
+            cos1 = cos2;
+            sin1 = sin2;
+        }
+    }
 
     //Right defense area
 
@@ -739,10 +809,60 @@ void CGraphics::drawSSLGround(dReal SSL_FIELD_RAD,dReal SSL_FIELD_LENGTH,dReal S
     glVertex3f(fw , (pwid / 2), epsilon);
     glVertex3f(fw - pdep, (pwid / 2), epsilon);
     glEnd();
+    
+    if(fw > 1.0) {
+        float gAreaDepth = 0.35;
+        float gAreaWidth = 0.80;
+    	glBegin(GL_QUADS);
+        glVertex3f(fw - gAreaDepth , -(gAreaWidth / 2) - lw , epsilon);
+        glVertex3f(fw , -(gAreaWidth / 2) - lw , epsilon);
+        glVertex3f(fw , -(gAreaWidth / 2)      , epsilon);
+        glVertex3f(fw - gAreaDepth , -(gAreaWidth / 2) , epsilon);
+        glEnd();
 
+        glBegin(GL_QUADS);
+        glVertex3f(fw - gAreaDepth , -(gAreaWidth / 2), epsilon);
+        glVertex3f(fw + lw - gAreaDepth,  -(gAreaWidth / 2), epsilon);
+        glVertex3f(fw + lw - gAreaDepth , (gAreaWidth / 2), epsilon);
+        glVertex3f(fw - gAreaDepth , (gAreaWidth / 2), epsilon);
+        glEnd();
+
+        glBegin(GL_QUADS);
+        glVertex3f(fw - gAreaDepth, (gAreaWidth / 2) - lw, epsilon);
+        glVertex3f(fw , (gAreaWidth / 2) - lw, epsilon);
+        glVertex3f(fw , (gAreaWidth / 2), epsilon);
+        glVertex3f(fw - gAreaDepth, (gAreaWidth / 2), epsilon);
+        glEnd();
+        
+        // Circle right defense area
+        const double defRad = 0.125;
+        const double shiftToInside = 0.075;
+        float maxX = -fw + gAreaDepth;
+        
+        cos1 = cos(-anglestep);
+        sin1 = sin(-anglestep);
+        for(angle = M_PI/2.0; angle <= (3.0*M_PI)/2.0; angle += anglestep) {
+        
+            cos2 = cos(angle);
+            sin2 = sin(angle);
+
+            if(fabs(fw + shiftToInside + cos1 * (defRad - lw) - gAreaDepth) < fabs(maxX)){
+                glBegin(GL_QUADS);
+                glVertex3f(fw + shiftToInside + cos1 * (defRad - lw) - gAreaDepth, sin1 * (defRad - lw), epsilon);
+                glVertex3f(fw + shiftToInside + cos1 * defRad        - gAreaDepth, sin1 * defRad       , epsilon);
+                glVertex3f(fw + shiftToInside + cos2 * defRad       - gAreaDepth, sin2 * defRad       , epsilon);
+                glVertex3f(fw + shiftToInside + cos2 * (defRad - lw) - gAreaDepth, sin2 * (defRad - lw), epsilon);
+                glEnd();
+            }
+
+            cos1 = cos2;
+            sin1 = sin2;
+        }
+    }
+
+    
 
     //Penalty spots
-
     glBegin(GL_POLYGON);
     for(angle=0.0f; angle <= 2.0 * M_PI; angle+=anglestep)
         glVertex3f(-fw + penx + cos(angle) * lw, 0.0f + sin(angle) * lw, epsilon);

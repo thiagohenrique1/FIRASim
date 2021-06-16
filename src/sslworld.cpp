@@ -269,7 +269,7 @@ SSLWorld::SSLWorld(QGLWidget *parent, ConfigWidget *_cfg, RobotsFormation *form)
     cfg->robotSettings = cfg->blueSettings;
     for (int k = 0; k < cfg->Robots_Count() * 2; k++)
     {
-        bool turn_on = (k % cfg->Robots_Count() < 3) ? true : false;
+        bool turn_on = (k % cfg->Robots_Count() < 5) ? true : false;
         float LO_X = -0.65;
         float LO_Y = -0.55;
         float HI_X = 0.65;
@@ -284,14 +284,15 @@ SSLWorld::SSLWorld(QGLWidget *parent, ConfigWidget *_cfg, RobotsFormation *form)
         // }
         float x = LO_X + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (HI_X - LO_X)));
         float y = LO_Y + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (HI_Y - LO_Y)));
-        x = (k % cfg->Robots_Count() < 3) ? x : 3.0;
-        y = (k % cfg->Robots_Count() < 3) ? y : 3.0;
+        x = (k % cfg->Robots_Count() < 5) ? x : 3.0;
+        y = (k % cfg->Robots_Count() < 5) ? y : 3.0;
         robots[k] = new CRobot(
             p, ball, cfg,
-            x, y, ROBOT_START_Z(cfg),
+            form->x[k], form->y[k], ROBOT_START_Z(cfg),
             ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY,
             k + 1, wheeltexid, dir, turn_on);
     }
+    
 
     p->initAllObjects();
 
@@ -371,7 +372,7 @@ SSLWorld::SSLWorld(QGLWidget *parent, ConfigWidget *_cfg, RobotsFormation *form)
 int SSLWorld::robotIndex(unsigned int robot, int team)
 {
     if (robot >= cfg->Robots_Count())
-        return -1;
+        return 0;
     return robot + team * cfg->Robots_Count();
 }
 
@@ -476,16 +477,22 @@ void SSLWorld::step(dReal dt)
         dReal balltx = 0, ballty = 0, balltz = 0;
         if (ballspeed < 0.01)
         {
-            ; //const dReal* ballAngVel = dBodyGetAngularVel(ball->body);
+
+            //const dReal* ballAngVel = dBodyGetAngularVel(ball->body);
             //TODO: what was supposed to be here?
+            //dReal accel = last_speed - ballspeed;
+            //dReal fk = accel * cfg->BallFriction() * cfg->BallMass() * cfg->Gravity();
+            dBodySetAngularVel(ball->body, 0, 0, 0);
+            dBodySetLinearVel(ball->body, 0, 0, 0);
         }
         else
         {
             // Velocidade real  normalizada (com atrito envolvido) da bola
-            dReal accel = last_speed - ballspeed;
-            accel = -accel / dt;
-            last_speed = ballspeed;
-            dReal fk = accel * cfg->BallFriction() * cfg->BallMass() * cfg->Gravity();
+            //dReal accel = last_speed - ballspeed;
+            //accel = -accel / dt;
+            //last_speed = ballspeed;
+            //dReal fk = accel * cfg->BallFriction() * cfg->BallMass() * cfg->Gravity();
+            dReal fk = cfg->BallFriction() * cfg->BallMass() * cfg->Gravity() * cfg->BallSlip();
             ballfx = -fk * ballvel[0] / ballspeed;
             ballfy = -fk * ballvel[1] / ballspeed;
             ballfz = -fk * ballvel[2] / ballspeed;
@@ -493,8 +500,9 @@ void SSLWorld::step(dReal dt)
             ballty = ballfx * cfg->BallRadius();
             balltz = 0;
             dBodyAddTorque(ball->body, balltx, ballty, balltz);
+            dBodyAddForce(ball->body,ballfx,ballfy,ballfz);
         }
-        dBodyAddForce(ball->body, ballfx, ballfy, ballfz);
+        //dBodyAddForce(ball->body, ballfx, ballfy, ballfz);
         if (dt == 0)
             dt = last_dt;
         else
@@ -571,6 +579,7 @@ void SSLWorld::step(dReal dt)
     sendVisionBuffer();
     //Internal Arbiter. Not used.
     //posProcess();
+    
     frame_num++;
     received = false;
 }
@@ -1154,7 +1163,7 @@ void SSLWorld::getValidPosition(dReal &x, dReal &y, uint32_t max){
 
 void RobotsFormation::setAll(const dReal *xx, const dReal *yy)
 {
-    for (int i = 0; i < cfg->Robots_Count(); i++)
+    for (int i = 0; i < 2*cfg->Robots_Count(); i++)
     {
         x[i] = xx[i];
         y[i] = yy[i];
@@ -1187,18 +1196,16 @@ RobotsFormation::RobotsFormation(int type, ConfigWidget *_cfg) : cfg(_cfg)
                                            0.75, -0.75, 1.5, -1.5, 2.25, -2.25};
         setAll(teamPosX, teamPosY);
     }
-    if (type == 3) // outside field
+    if (type == 3) // div a
     {
-        dReal teamPosX[MAX_ROBOT_COUNT] = {0.4, 0.8, 1.2, 1.6, 2.0, 2.4,
-                                           2.8, 3.2, 3.6, 4.0, 4.4, 4.8};
-        dReal teamPosY[MAX_ROBOT_COUNT] = {-4.0, -4.0, -4.0, -4.0, -4.0, -4.0,
-                                           -4.0, -4.0, -4.0, -4.0, -4.0, -4.0};
+        dReal teamPosX[MAX_ROBOT_COUNT] = {0.30, 0.45, 0.45, 0.7, 1.1, -0.30, -0.45, -0.45, -0.7, -1.1, 0.0, 0.0};
+        dReal teamPosY[MAX_ROBOT_COUNT] = {0.0, 0.2, -0.2, 0.0, 0.0, 0.0, 0.2, -0.2, 0.0, 0.0, 0.0, 0.0};
         setAll(teamPosX, teamPosY);
     }
-    if (type == 4)
+    if (type == 4) // div b
     {
-        dReal teamPosX[MAX_ROBOT_COUNT] = {2.8, 2.5, 2.5, 0.8, 0.8, 1.1, 3, 3.2, 3.4, 3.6, 3.8, 4.0};
-        dReal teamPosY[MAX_ROBOT_COUNT] = {5 + 0.0, 5 - 0.3, 5 + 0.3, 5 + 0.0, 5 + 1.5, 5.5, 1, 1, 1, 1, 1, 1};
+        dReal teamPosX[MAX_ROBOT_COUNT] = {0.25, 0.5, 0.7, -0.25, -0.5, -0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        dReal teamPosY[MAX_ROBOT_COUNT] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         setAll(teamPosX, teamPosY);
     }
     if (type == -1) // outside
