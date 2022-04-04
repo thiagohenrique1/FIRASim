@@ -540,3 +540,10 @@ void MainWindow::fullSpeed(bool value)
 {
     glwidget->ssl->fullSpeed = value;
 }
+
+void MainWindow::setFast()
+{
+    glwidget->stopped_timeout = false;
+    timer->setInterval(0);
+    glwidget->cfg->v_SyncWithPython->setBool(true);
+}

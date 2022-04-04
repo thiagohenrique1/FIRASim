@@ -60,6 +60,7 @@ public:
     double kickpower, chipAngle;
     bool fullScreen;
     int cont_stopped = 0;
+    bool stopped_timeout = true;
     void update3DCursor(int mouse_x,int mouse_y);
     void putBall(dReal x,dReal y);
     void reform(int team,const QString& act);    

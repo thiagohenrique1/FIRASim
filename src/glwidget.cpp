@@ -382,7 +382,7 @@ void GLWidget::step()
         {
             if (cfg->SyncWithPython())
             {
-                if (ssl->received || cont_stopped > 10)
+                if (ssl->received || (cont_stopped > 10 && stopped_timeout))
                 {
                     cont_stopped = 0;
                     ssl->step(cfg->DeltaTime());

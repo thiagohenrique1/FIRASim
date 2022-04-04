@@ -44,5 +44,8 @@ int main(int argc, char *argv[])
         w.withGoalKick(true);
     if(std::find(argv, argend, std::string("--xlr8")) != argend)
         w.fullSpeed(true);
+    if (std::find(argv, argend, std::string("--fast")) != argend)
+        w.setFast();
+
     return QApplication::exec();
 }
