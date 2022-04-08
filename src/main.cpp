@@ -16,8 +16,11 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <QtWidgets/QApplication>
+#include <QCommandLineParser>
+#include <QCommandLineOption>
 #include "mainwindow.h"
 #include "winmain.h"
+#include <string>
 
 int main(int argc, char *argv[])
 {
@@ -31,20 +34,37 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
 
-    if (std::find(argv, argend, std::string("--headless")) != argend
-        || std::find(argv, argend, std::string("-H")) != argend) {
-        // enable headless mode
+    QCommandLineParser parser;
+    QCommandLineOption idOption("id", "Set udp ports by id", "id");
+    parser.addOption(idOption);
+    QCommandLineOption setHeadless({"headless", "H"}, "Run without GUI");
+    parser.addOption(setHeadless);
+    QCommandLineOption setAtkfault("atkfault", "Sets withGoalKick to true");
+    parser.addOption(setAtkfault);
+    QCommandLineOption setFullSpeed("xlr8", "Sets fullSpeed to true");
+    parser.addOption(setFullSpeed);
+    QCommandLineOption setFast("fast", "Sets Fast to true");
+    parser.addOption(setFast);
+
+    parser.process(a);
+
+    if (parser.isSet(idOption)) {
+        auto id = parser.value(idOption).toInt();
+        w.changePortById(id);
+    }
+
+    if (parser.isSet(setHeadless)) {
         w.hide();
         w.setIsGlEnabled(false);
     } else {
-        // Run normally
         w.show();
     }
-    if(std::find(argv, argend, std::string("--atkfault")) != argend)
+
+    if (parser.isSet(setAtkfault))
         w.withGoalKick(true);
-    if(std::find(argv, argend, std::string("--xlr8")) != argend)
+    if (parser.isSet(setFullSpeed))
         w.fullSpeed(true);
-    if (std::find(argv, argend, std::string("--fast")) != argend)
+    if (parser.isSet(setFast))
         w.setFast();
 
     return QApplication::exec();

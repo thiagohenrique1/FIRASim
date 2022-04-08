@@ -503,6 +503,7 @@ void MainWindow::reconnectCommandSocket()
     if (commandSocket->bind(QHostAddress::Any,configwidget->CommandListenPort()))
         logStatus(QString("Command listen port binded on: %1").arg(configwidget->CommandListenPort()),QColor("green"));
     QObject::connect(commandSocket,SIGNAL(readyRead()),this,SLOT(recvActions()));
+    glwidget->ssl->commandSocket = commandSocket;
 }
 
 void MainWindow::reconnectVisionSocket()
@@ -513,6 +514,7 @@ void MainWindow::reconnectVisionSocket()
     visionServer->change_address(configwidget->VisionMulticastAddr());
     visionServer->change_port(configwidget->VisionMulticastPort());
     logStatus(QString("Vision server connected on: %1").arg(configwidget->VisionMulticastPort()),QColor("green"));
+    glwidget->ssl->visionServer = visionServer;
     //sendBuffer();
 }
 
@@ -539,6 +541,14 @@ void MainWindow::withGoalKick(bool value)
 void MainWindow::fullSpeed(bool value)
 {
     glwidget->ssl->fullSpeed = value;
+}
+
+void MainWindow::changePortById(int id)
+{
+    configwidget->v_VisionMulticastPort->setInt(10002+id);
+    configwidget->v_CommandListenPort->setInt(20011+id);
+    reconnectVisionSocket();
+    reconnectCommandSocket();
 }
 
 void MainWindow::setFast()
