@@ -257,7 +257,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     robotwidget->teamCombo->setCurrentIndex(0);
     robotwidget->robotCombo->setCurrentIndex(0);
-    robotwidget->setPicture(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
+    if (!glwidget->ssl->isGLEnabled)
+        robotwidget->setPicture(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
     robotwidget->id = 0;
     scene = new QGraphicsScene(0,0,800,600);  
 }
@@ -279,8 +280,9 @@ void MainWindow::showHideSimulator(bool v)
 
 void MainWindow::changeCurrentRobot()
 {
-    glwidget->Current_robot=robotwidget->robotCombo->currentIndex();    
-    robotwidget->setPicture(glwidget->ssl->robots[glwidget->ssl->robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
+    glwidget->Current_robot=robotwidget->robotCombo->currentIndex();
+    if (!glwidget->ssl->isGLEnabled)
+        robotwidget->setPicture(glwidget->ssl->robots[glwidget->ssl->robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
     robotwidget->id = robotIndex(glwidget->Current_robot, glwidget->Current_team);
     robotwidget->changeRobotOnOff(robotwidget->id, glwidget->ssl->robots[robotwidget->id]->on);
 }
@@ -288,7 +290,8 @@ void MainWindow::changeCurrentRobot()
 void MainWindow::changeCurrentTeam()
 {
     glwidget->Current_team=robotwidget->teamCombo->currentIndex();
-    robotwidget->setPicture(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
+    if (!glwidget->ssl->isGLEnabled)
+        robotwidget->setPicture(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
     robotwidget->id = robotIndex(glwidget->Current_robot, glwidget->Current_team);
     robotwidget->changeRobotOnOff(robotwidget->id, glwidget->ssl->robots[robotwidget->id]->on);
 }
@@ -531,6 +534,11 @@ void MainWindow::sendBuffer()
 void MainWindow::setIsGlEnabled(bool value)
 {
   glwidget->ssl->isGLEnabled = value;
+  if (value)
+      glwidget->ssl->g->enableGraphics();
+  else
+      glwidget->ssl->g->disableGraphics();
+
 }
 
 void MainWindow::withGoalKick(bool value)
